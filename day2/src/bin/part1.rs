@@ -1,9 +1,5 @@
 use std::{cmp::max, error::Error, str::FromStr};
 
-fn main() {
-    let input = include_str!("./input.txt");
-    println!("Output: {}", process(input));
-}
 
 #[derive(Debug, Default)]
 struct CubeSet {
@@ -13,29 +9,16 @@ struct CubeSet {
 }
 
 impl CubeSet {
+    fn new(red: u32, green: u32, blue: u32) -> Self {
+        Self { red, green, blue }
+    }
+
     fn combine(self, rhs: &Self) -> Self {
         Self {
             red: max(self.red, rhs.red),
             blue: max(self.blue, rhs.blue),
             green: max(self.green, rhs.green),
         }
-    }
-}
-
-#[derive(Debug)]
-struct Game {
-    pub id: u32,
-    pub sets: Vec<CubeSet>,
-}
-
-impl Game {
-    fn is_set_possible(&self, set: CubeSet) -> bool {
-        let total_set = self
-            .sets
-            .iter()
-            .fold(CubeSet::default(), |set, item| set.combine(item));
-
-        set.red >= total_set.red && set.blue >= total_set.blue && set.green >= total_set.green
     }
 }
 
@@ -54,7 +37,6 @@ impl FromStr for CubeSet {
                 .collect::<String>()
                 .parse()
                 .expect("Expect value number");
-            // dbg!(num)
 
             if part.ends_with("red") {
                 red = num
@@ -65,37 +47,56 @@ impl FromStr for CubeSet {
             } else {
                 panic!("Unknown color ${s}")
             }
-
-            dbg!(s, red, blue, green);
         }
-        Ok(Self { red, green, blue })
+        Ok(Self::new(red, green, blue))
     }
+}
+
+#[derive(Debug)]
+struct Game {
+    pub id: u32,
+    pub sets: Vec<CubeSet>,
+}
+
+impl Game {
+    fn is_valid_superset(&self, set: CubeSet) -> bool {
+        let total_set = self
+            .sets
+            .iter()
+            .fold(CubeSet::default(), |set, item| set.combine(item));
+
+        set.red >= total_set.red && set.blue >= total_set.blue && set.green >= total_set.green
+    }
+}
+
+impl FromStr for Game {
+    type Err = Box<dyn Error>;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (game, cubes) = s.split_once(':').expect("Well formed input");
+        let id = &game[5..];
+        let cubes: Vec<CubeSet> = cubes
+            .replace(' ', "")
+            .split(';')
+            .map(|s| s.parse().unwrap())
+            .collect();
+        Ok(Self {
+            id: id.parse().expect("valid number"),
+            sets: cubes,
+        })
+    }
+}
+
+fn main() {
+    let input = include_str!("./input.txt");
+    println!("Output: {}", process(input));
 }
 
 fn process(input: &str) -> u32 {
     input
         .lines()
-        .map(|l| {
-            let (game, cubes) = l.split_once(':').expect("Well formed input");
-            let id = &game[5..];
-            let cubes = cubes.replace(' ', "");
-            let cubes: Vec<CubeSet> = cubes.split(';').map(|s| s.parse().unwrap()).collect();
-            Game {
-                id: id.parse().expect("valid number"),
-                sets: cubes,
-            }
-        })
-        .filter_map(|g| {
-            if g.is_set_possible(CubeSet {
-                red: 12,
-                green: 13,
-                blue: 14,
-            }) {
-                Some(g.id)
-            } else {
-                None
-            }
-        })
+        .map(|l| l.parse::<Game>().expect("Well formed input"))
+        .filter_map(|g| g.is_valid_superset(CubeSet::new(12,13,14)).then_some(g.id))
         .sum()
 }
 
@@ -105,6 +106,7 @@ mod tests {
 
     #[test]
     fn test_sample() {
-        assert_eq!(process(include_str!("./sample.txt")), 8)
+        assert_eq!(process(include_str!("./sample.txt")), 8);
+        assert_eq!(process(include_str!("./input.txt")), 2416)
     }
 }

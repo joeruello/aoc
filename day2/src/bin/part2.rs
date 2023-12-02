@@ -1,10 +1,5 @@
 use std::{cmp::max, error::Error, str::FromStr};
 
-fn main() {
-    let input = include_str!("./input.txt");
-    println!("Output: {}", process(input));
-}
-
 #[derive(Debug, Default)]
 struct CubeSet {
     pub red: u32,
@@ -13,6 +8,10 @@ struct CubeSet {
 }
 
 impl CubeSet {
+    fn new(red: u32, green: u32, blue: u32) -> Self {
+        Self { red, green, blue }
+    }
+
     fn combine(self, rhs: &Self) -> Self {
         Self {
             red: max(self.red, rhs.red),
@@ -23,19 +22,6 @@ impl CubeSet {
 
     fn power(&self) -> u32 {
         self.blue * self.red * self.green
-    }
-}
-
-#[derive(Debug)]
-struct Game {
-    pub sets: Vec<CubeSet>,
-}
-
-impl Game {
-    fn min_set(&self) -> CubeSet {
-        self.sets
-            .iter()
-            .fold(CubeSet::default(), |set, item| set.combine(item))
     }
 }
 
@@ -65,20 +51,64 @@ impl FromStr for CubeSet {
                 panic!("Unknown color ${s}")
             }
         }
-        Ok(Self { red, green, blue })
+        Ok(Self::new(red, green, blue))
     }
+}
+
+#[derive(Debug)]
+struct Game {
+    #[allow(dead_code)]
+    pub id: u32,
+    pub sets: Vec<CubeSet>,
+}
+
+impl Game {
+    fn super_set(&self) -> CubeSet {
+        self.sets
+            .iter()
+            .fold(CubeSet::default(), |set, item| set.combine(item))
+    }
+
+    #[allow(dead_code)]
+    fn is_valid_superset(&self, set: CubeSet) -> bool {
+        let total_set = self.super_set();
+
+        set.red >= total_set.red && set.blue >= total_set.blue && set.green >= total_set.green
+    }
+}
+
+impl FromStr for Game {
+    type Err = Box<dyn Error>;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let (game, cubes) = s.split_once(':').expect("Well formed input");
+        let id = &game[5..];
+        let cubes: Vec<CubeSet> = cubes
+            .replace(' ', "")
+            .split(';')
+            .map(|s| s.parse().unwrap())
+            .collect();
+        Ok(Self {
+            id: id.parse().expect("valid number"),
+            sets: cubes,
+        })
+    }
+}
+
+fn main() {
+    let input = include_str!("./input.txt");
+    println!("Output: {}", process(input));
 }
 
 fn process(input: &str) -> u32 {
     input
         .lines()
         .map(|l| {
-            let (_, cubes) = l.split_once(':').expect("Well formed input");
-            let cubes = cubes.replace(' ', "");
-            let cubes: Vec<CubeSet> = cubes.split(';').map(|s| s.parse().unwrap()).collect();
-            Game { sets: cubes }
+            l.parse::<Game>()
+                .expect("Well formed input")
+                .super_set()
+                .power()
         })
-        .map(|g| g.min_set().power())
         .sum()
 }
 
@@ -88,6 +118,7 @@ mod tests {
 
     #[test]
     fn test_sample() {
-        assert_eq!(process(include_str!("./sample.txt")), 2286)
+        assert_eq!(process(include_str!("./sample.txt")), 2286);
+        assert_eq!(process(include_str!("./input.txt")), 63307)
     }
 }
