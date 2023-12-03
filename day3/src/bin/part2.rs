@@ -1,4 +1,4 @@
-use std::{cmp::min, collections::HashMap};
+use std::collections::HashMap;
 
 use regex::Regex;
 
@@ -15,7 +15,7 @@ fn process(input: &str) -> u32 {
     for (y, line) in schematic.iter().enumerate() {
         for m in numbers_pattern.find_iter(line) {
             for x in m.range() {
-                if let Some(gear_coords) = find_adjacent_gear(&schematic, x, y, line.len(), schematic.len()) {
+                if let Some(gear_coords) = find_adjacent_gear(&schematic, x, y) {
                     gears.entry(gear_coords).or_insert(vec![]).push(
                         m.as_str()
                             .parse::<u32>()
@@ -39,18 +39,9 @@ fn process(input: &str) -> u32 {
         .sum()
 }
 
-fn find_adjacent_gear(
-    arr: &[&str],
-    x0: usize,
-    y0: usize,
-    x_max: usize,
-    y_max: usize,
-) -> Option<(usize, usize)> {
-    for y in y0.saturating_sub(1)..=min(y0 + 1, y_max) {
-        for x in x0.saturating_sub(1)..=min(x0 + 1, x_max) {
-            if x == x0 && y == y0 {
-                continue;
-            }
+fn find_adjacent_gear(arr: &[&str], x0: usize, y0: usize) -> Option<(usize, usize)> {
+    for y in y0.saturating_sub(1)..=y0 + 1 {
+        for x in x0.saturating_sub(1)..=x0 + 1 {
             if arr
                 .get(y)
                 .and_then(|y| y.chars().nth(x))
