@@ -12,7 +12,7 @@ fn process(input: &str) -> u64 {
 
     let map: HashMap<_, _> = lines
         .map(|line| {
-            let parsed = line.replace(" = (", " ").replace(',', "").replace(")", "");
+            let parsed = line.replace(['=','(',',',')'], "");
             let mut parsed = parsed.split_whitespace();
             let element = parsed.next().unwrap().to_string();
             let left = parsed.next().unwrap().to_string();
