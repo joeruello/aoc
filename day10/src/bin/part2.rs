@@ -3,6 +3,8 @@ use std::{error::Error, str::FromStr, vec};
 use itertools::Itertools;
 use num::Integer;
 
+type Point = (usize, usize);
+
 #[derive(Debug, PartialEq)]
 enum Tile {
     NorthSouth,
@@ -14,8 +16,6 @@ enum Tile {
     Ground,
     Start,
 }
-
-type Point = (usize, usize);
 
 impl Tile {
     fn directions(&self) -> (Direction, Direction) {
@@ -55,7 +55,7 @@ enum Direction {
 }
 
 impl Direction {
-    fn step(&self, (x, y): Point) -> Point {
+    fn progress_in_direction(&self, (x, y): Point) -> Point {
         match self {
             Direction::North => (x, y - 1),
             Direction::South => (x, y + 1),
@@ -71,6 +71,10 @@ impl Direction {
             Direction::East => Direction::West,
             Direction::West => Direction::East,
         }
+    }
+
+    fn is_opposite(&self, other: &Direction) -> bool {
+        self.opposite() == *other
     }
 }
 
@@ -105,9 +109,7 @@ fn find_start(map: &[Vec<Tile>]) -> Point {
 
 fn determine_start_type(map: &[Vec<Tile>]) -> Tile {
     let start = find_start(map);
-
     let neighbours = neighbours(map, start);
-    assert!(neighbours.len() == 2);
     use Direction::*;
     match (neighbours.first().unwrap(), neighbours.last().unwrap()) {
         (North, South) => Tile::NorthSouth,
@@ -121,24 +123,25 @@ fn determine_start_type(map: &[Vec<Tile>]) -> Tile {
 }
 
 fn neighbours(map: &[Vec<Tile>], (x, y): (usize, usize)) -> Vec<Direction> {
-    let north = if y > 1 {
-        map.get(y - 1).and_then(|row| row.get(x))
-    } else {
-        None
-    };
-    let south = map.get(y + 1).and_then(|row| row.get(x));
-    let east = map.get(y).and_then(|row| row.get(x + 1));
-    let west = if x > 1 {
-        map.get(y).and_then(|row| row.get(x - 1))
-    } else {
-        None
-    };
-
     vec![
-        (Direction::North, north),
-        (Direction::South, south),
-        (Direction::East, east),
-        (Direction::West, west),
+        (
+            Direction::North,
+            if y > 1 {
+                map.get(y - 1).and_then(|row| row.get(x))
+            } else {
+                None
+            },
+        ),
+        (Direction::South, map.get(y + 1).and_then(|row| row.get(x))),
+        (Direction::East, map.get(y).and_then(|row| row.get(x + 1))),
+        (
+            Direction::West,
+            if x > 1 {
+                map.get(y).and_then(|row| row.get(x - 1))
+            } else {
+                None
+            },
+        ),
     ]
     .into_iter()
     .filter(|(dir, opt)| {
@@ -146,47 +149,38 @@ fn neighbours(map: &[Vec<Tile>], (x, y): (usize, usize)) -> Vec<Direction> {
             if *t == Tile::Ground {
                 return false;
             }
-            t.directions().0 == dir.opposite() || t.directions().1 == dir.opposite()
+            dir.is_opposite(&t.directions().0) || dir.is_opposite(&t.directions().1)
         })
     })
     .map(|(dir, _)| dir)
     .collect()
 }
 
-fn find_main_loop(map: &[Vec<Tile>]) -> Vec<Point> {
-    let start = find_start(map);
+fn find_main_loop(map: &[Vec<Tile>], start: Point) -> Vec<Point> {
     let first_direction: Direction = *neighbours(map, start).first().unwrap();
-    let mut walker = (first_direction.step(start), first_direction);
+    let mut walker = (
+        first_direction.progress_in_direction(start),
+        first_direction,
+    );
     let mut main_loop = vec![start, walker.0];
     loop {
         let (point, prev_dir) = walker;
         let tile = get_tile(map, point);
-        let next_walker = match tile {
-            Tile::Start => (point, prev_dir),
+        walker = match tile {
+            Tile::Start => return main_loop,
             _ => {
                 let (a, b) = tile.directions();
-                let next_dir = if a.opposite() == prev_dir { b } else { a };
-                let new_point = next_dir.step(point);
+                let next_dir = if prev_dir.is_opposite(&a) { b } else { a };
+                let new_point = next_dir.progress_in_direction(point);
                 main_loop.push(new_point);
                 (new_point, next_dir)
             }
         };
-
-        if matches!(get_tile(map, next_walker.0), Tile::Start) {
-            return main_loop;
-        }
-
-        walker = next_walker;
     }
 }
 
 fn get_tile(map: &[Vec<Tile>], (x, y): (usize, usize)) -> &Tile {
     map.get(y).and_then(|row| row.get(x)).unwrap()
-}
-
-fn main() {
-    let input = include_str!("./input.txt");
-    println!("Output: {}", process(input));
 }
 
 fn process(input: &str) -> usize {
@@ -202,49 +196,36 @@ fn process(input: &str) -> usize {
     let width = map.first().map(|f| f.len()).unwrap();
     let height = map.len();
 
-    let main_loop = find_main_loop(&map);
-    let mut width_values: Vec<Vec<_>> = vec![];
-    for y in 0..height {
-        let mut winding_number = 0;
-        width_values.push(
-            (0..width)
-                .map(|x| match main_loop.contains(&(x, y)) {
-                    true => {
-                        let tile = get_tile(&map, (x, y));
-                        if *tile == Tile::Start {
-                            winding_number += dbg!(determine_start_type(&map)).winding_number()
-                        } else {
-                            winding_number += tile.winding_number();
-                        }
-                        false
-                    }
-                    false => winding_number.is_odd(),
-                })
-                .collect(),
-        )
-    }
-
+    let start = find_start(&map);
+    let main_loop = find_main_loop(&map, start);
     let mut count = 0;
     for y in 0..height {
+        let mut winding_number = 0;
         for x in 0..width {
-            match main_loop.contains(&(x, y)) {
-                false => {
-                    if width_values[y][x] {
-                        print!("*");
-                        count += 1;
-                    } else {
-                        print!(" ")
-                    }
+            if main_loop.contains(&(x, y)) {
+                let tile = get_tile(&map, (x, y));
+                if *tile == Tile::Start {
+                    winding_number += determine_start_type(&map).winding_number()
+                } else {
+                    winding_number += tile.winding_number();
                 }
-                true => {
-                    print!("█")
-                }
+                print!("█");
+            } else if winding_number.is_odd() {
+                print!("*");
+                count += 1
+            } else {
+                print!(" ");
             }
         }
-        println!();
+        println!()
     }
 
     count
+}
+
+fn main() {
+    let input = include_str!("./input.txt");
+    println!("Output: {}", process(input));
 }
 
 #[cfg(test)]
