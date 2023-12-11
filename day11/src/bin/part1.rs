@@ -37,9 +37,11 @@ fn process(input: &str) -> usize {
         })
         .collect();
 
-    galaxies.into_iter().tuple_combinations().map(|(a,b)| {
-        a.0.abs_diff(b.0) +  a.1.abs_diff(b.1)
-    }).sum()
+    galaxies
+        .into_iter()
+        .tuple_combinations()
+        .map(|((y0, x0), (y1, x1))| y0.abs_diff(y1) + x0.abs_diff(x1))
+        .sum()
 }
 
 fn parse(input: &str) -> Grid<Tile> {
@@ -58,7 +60,7 @@ fn parse(input: &str) -> Grid<Tile> {
 }
 
 fn expand(mut grid: Grid<Tile>) -> Grid<Tile> {
-    let empty_rows = grid
+    let empty_rows: Vec<_> = grid
         .iter_rows()
         .enumerate()
         .filter_map(|(i, mut r)| {
@@ -68,9 +70,9 @@ fn expand(mut grid: Grid<Tile>) -> Grid<Tile> {
                 None
             }
         })
-        .collect_vec();
+        .collect();
 
-    let empty_cols = grid
+    let empty_cols: Vec<_> = grid
         .iter_cols()
         .enumerate()
         .filter_map(|(i, mut c)| {
@@ -80,7 +82,7 @@ fn expand(mut grid: Grid<Tile>) -> Grid<Tile> {
                 None
             }
         })
-        .collect_vec();
+        .collect();
 
     for (i, row) in empty_rows.into_iter().enumerate() {
         grid.insert_row(row + i, [Tile::Space].repeat(grid.cols()));

@@ -1,6 +1,6 @@
 use grid::Grid;
 use itertools::Itertools;
-use std::fmt::Debug;
+use std::cmp::{max, min};
 
 fn main() {
     let input = include_str!("./input.txt");
@@ -13,16 +13,7 @@ enum Tile {
     Galaxy,
 }
 
-impl Debug for Tile {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Space => write!(f, "."),
-            Self::Galaxy => write!(f, "#"),
-        }
-    }
-}
-
-fn process(input: &str, factor: usize) -> usize {
+fn process(input: &str, expansion_factor: usize) -> usize {
     let grid = parse(input);
     let (empty_rows, empty_cols) = expand(&grid);
 
@@ -41,23 +32,23 @@ fn process(input: &str, factor: usize) -> usize {
         .into_iter()
         .tuple_combinations()
         .map(|((y0, x0), (y1, x1))| {
-            let mut dist_y = 0;
-            for y in if y0 < y1 { y0..y1 } else { y1..y0 } {
+            let dist_y = (min(y0, y1)..max(y0, y1)).fold(0, |mut acc, y| {
                 if empty_rows.contains(&y) {
-                    dist_y += factor
+                    acc += expansion_factor
                 } else {
-                    dist_y += 1
+                    acc += 1
                 }
-            }
+                acc
+            });
 
-            let mut dist_x = 0;
-            for x in if x0 < x1 { x0..x1 } else { x1..x0 } {
+            let dist_x = (min(x0, x1)..max(x0, x1)).fold(0, |mut acc, x| {
                 if empty_cols.contains(&x) {
-                    dist_x += factor
+                    acc += expansion_factor
                 } else {
-                    dist_x += 1
+                    acc += 1
                 }
-            }
+                acc
+            });
             dist_x + dist_y
         })
         .sum()
@@ -89,7 +80,7 @@ fn expand(grid: &Grid<Tile>) -> (Vec<usize>, Vec<usize>) {
                 None
             }
         })
-        .collect_vec();
+        .collect();
 
     let empty_cols = grid
         .iter_cols()
@@ -101,7 +92,7 @@ fn expand(grid: &Grid<Tile>) -> (Vec<usize>, Vec<usize>) {
                 None
             }
         })
-        .collect_vec();
+        .collect();
 
     (empty_rows, empty_cols)
 }
