@@ -26,7 +26,6 @@ fn process(input: &str) -> usize {
 }
 
 fn count_differences(a: &[char], b: &[char]) -> usize {
-    assert!(a.len() == b.len());
     let mut num_diffs = 0;
     let mut first_idx = None;
     for i in 0..a.len() {
@@ -37,31 +36,15 @@ fn count_differences(a: &[char], b: &[char]) -> usize {
             num_diffs += 1;
         }
     }
-
-    if num_diffs == 1 {
-        println!(
-            "Fixing smudge {a:?} {b:?}. Changed idx: {}",
-            first_idx.unwrap()
-        );
-    }
     num_diffs
 }
 
 fn find_reflections(pattern: TooDee<char>) -> usize {
-    if let Some(row) = pattern
-        .rows()
-        .enumerate()
+    if let Some(row) = (0..pattern.num_rows())
         .tuple_windows()
-        .find_map(|((ia, a), (ib, b))| {
+        .find_map(|(ia, ib)| {
             let mut fixed_smudge = false;
-
-            match count_differences(a, b) {
-                0 => (),
-                1 => fixed_smudge = true,
-                _ => return None,
-            }
-
-            for i in 1.. {
+            for i in 0.. {
                 if i > ia || ib + i >= pattern.num_rows() {
                     break;
                 }
@@ -84,22 +67,13 @@ fn find_reflections(pattern: TooDee<char>) -> usize {
     } else if let Some(col) = (0..pattern.num_cols())
         .tuple_windows()
         .find_map(|(ia, ib)| {
-            let a = pattern.col(ia).map(ToOwned::to_owned).collect_vec();
-            let b = pattern.col(ib).map(ToOwned::to_owned).collect_vec();
             let mut fixed_smudge = false;
-
-            match count_differences(&a, &b) {
-                0 => (),
-                1 => fixed_smudge = true,
-                _ => return None,
-            }
-
-            for i in 1.. {
+            for i in 0.. {
                 if i > ia || ib + i >= pattern.num_cols() {
                     break;
                 }
-                let col_a = pattern.col(ia - i).map(|c| c.to_owned()).collect_vec();
-                let col_b = pattern.col(ib + i).map(|c| c.to_owned()).collect_vec();
+                let col_a = pattern.col(ia - i).cloned().collect_vec();
+                let col_b = pattern.col(ib + i).cloned().collect_vec();
                 match count_differences(&col_a, &col_b) {
                     0 => continue,
                     1 => {
