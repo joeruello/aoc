@@ -1,6 +1,6 @@
 use std::{
     cmp::Ordering,
-    collections::{BTreeMap, HashMap},
+    collections::BTreeMap,
 };
 
 fn main() {
@@ -60,7 +60,7 @@ fn process(input: &str) -> u64 {
     let mut hands: Vec<Hand> = input
         .lines()
         .map(|input| {
-            let (hand, bid) = input.split_once(" ").unwrap();
+            let (hand, bid) = input.split_once(' ').unwrap();
             let hand: Vec<_> = hand
                 .chars()
                 .map(|c| match c {
