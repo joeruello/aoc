@@ -48,80 +48,76 @@ fn count_differences(a: &[char], b: &[char]) -> usize {
 }
 
 fn find_reflections(pattern: TooDee<char>) -> usize {
-    println!("Finding reflections....");
-    let candidate_rows = pattern
+    if let Some(row) = pattern
         .rows()
         .enumerate()
         .tuple_windows()
-        .find(|((ia, a), (ib, b))| {
+        .find_map(|((ia, a), (ib, b))| {
             let mut fixed_smudge = false;
 
-            if count_differences(a, b) == 1 {
-                fixed_smudge = true
-            } else if a != b {
-                return false;
+            match count_differences(a, b) {
+                0 => (),
+                1 => fixed_smudge = true,
+                _ => return None,
             }
 
             for i in 1.. {
-                if i > *ia || *ib + i >= pattern.num_rows() {
+                if i > ia || ib + i >= pattern.num_rows() {
                     break;
-                } else if pattern[ia - i] != pattern[ib + i] {
-                    if fixed_smudge {
-                        return false;
-                    } else if count_differences(&pattern[ia - i], &pattern[ib + i]) == 1 && !fixed_smudge {
-                        fixed_smudge = true;
-                    } else {
-                        return false;
+                }
+                match count_differences(&pattern[ia - i], &pattern[ib + i]) {
+                    0 => continue,
+                    1 => {
+                        if fixed_smudge {
+                            return None;
+                        }
+                        fixed_smudge = true
                     }
+                    _ => return None,
                 }
             }
 
-            fixed_smudge
-        });
-    if let Some(((ia, _), _)) = candidate_rows {
-        println!("  Found row {}", ia + 1);
-        return (ia + 1) * 100;
-    }
+            fixed_smudge.then_some(ia)
+        })
+    {
+        (row + 1) * 100
+    } else if let Some(col) = (0..pattern.num_cols())
+        .tuple_windows()
+        .find_map(|(ia, ib)| {
+            let a = pattern.col(ia).map(ToOwned::to_owned).collect_vec();
+            let b = pattern.col(ib).map(ToOwned::to_owned).collect_vec();
+            let mut fixed_smudge = false;
 
-    let candidate_cols = (0..pattern.num_cols()).tuple_windows().find(|(ia, ib)| {
-        let a = pattern.col(*ia).map(|c| c.to_owned()).collect_vec();
-        let b = pattern.col(*ib).map(|c| c.to_owned()).collect_vec();
-        let mut fixed_smudge = false;
-
-        if count_differences(&a, &b) == 1 {
-            fixed_smudge = true
-        } else if a != b {
-            return false;
-        }
-
-        for i in 1.. {
-            if i > *ia || *ib + i >= pattern.num_cols() {
-                break;
+            match count_differences(&a, &b) {
+                0 => (),
+                1 => fixed_smudge = true,
+                _ => return None,
             }
-            let col_a = pattern
-                .col(ia.saturating_sub(i))
-                .map(|c| c.to_owned())
-                .collect_vec();
-            let col_b = pattern.col(ib + i).map(|c| c.to_owned()).collect_vec();
-            if col_a != col_b {
-                if fixed_smudge {
-                    return false;
-                } else if count_differences(&col_a, &col_b) == 1 && !fixed_smudge {
-                    fixed_smudge = true;
-                } else {
-                    return false;
+
+            for i in 1.. {
+                if i > ia || ib + i >= pattern.num_cols() {
+                    break;
+                }
+                let col_a = pattern.col(ia - i).map(|c| c.to_owned()).collect_vec();
+                let col_b = pattern.col(ib + i).map(|c| c.to_owned()).collect_vec();
+                match count_differences(&col_a, &col_b) {
+                    0 => continue,
+                    1 => {
+                        if fixed_smudge {
+                            return None;
+                        }
+                        fixed_smudge = true
+                    }
+                    _ => return None,
                 }
             }
-        }
-        fixed_smudge
-    });
-
-    if let Some((ia, _)) = candidate_cols {
-        println!("Found col {}", ia + 1);
-        return ia + 1;
+            fixed_smudge.then_some(ia)
+        })
+    {
+        col + 1
+    } else {
+        panic!("no matches")
     }
-
-    panic!("no matches")
 }
 
 #[cfg(test)]
