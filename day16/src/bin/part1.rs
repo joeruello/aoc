@@ -1,6 +1,16 @@
 use std::collections::HashSet;
 
 use toodee::{TooDee, TooDeeOps};
+type Cordinate = (usize, usize);
+type Grid = TooDee<(char, HashSet<Direction>)>;
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+enum Direction {
+    N,
+    S,
+    W,
+    E,
+}
 
 fn main() {
     let input = include_str!("./input.txt");
@@ -21,165 +31,52 @@ fn process(input: &str) -> usize {
             .collect(),
     );
 
-
-
     walk((0, 0), Direction::E, &mut grid);
-
-    let mut count = 0;
-    for row in grid.rows() {
-        for (col, set) in row {
-            if !set.is_empty() {
-                print!("#");
-                count+=1;
-            } else {
-                print!(".")
-            }
-        }
-        println!()
-    }
-
-    count
+    count_energised_cells(&grid)
 }
 
-type Cordinate = (usize, usize);
+fn count_energised_cells(grid: &Grid) -> usize {
+    grid.cells().filter(|(_, set)| !set.is_empty()).count()
+}
 
-fn walk(cordinate: Cordinate, direction: Direction, grid: &mut TooDee<(char, HashSet<Direction>)>) {
-    let (tile, directions) = &mut grid[cordinate];
-    if directions.contains(&direction) {
-        return
-    } else {
-        directions.insert(direction);
+fn walk(cordinate: Cordinate, direction: Direction, grid: &mut Grid) {
+    let (tile, visited_directions) = &mut grid[cordinate];
+    if visited_directions.contains(&direction) {
+        return;
     }
 
+    visited_directions.insert(direction);
+    let next_directions = match (tile, direction) {
+        ('.', _) => vec![direction],
+        ('|', Direction::N | Direction::S) => vec![direction],
+        ('|', Direction::E | Direction::W) => vec![Direction::N, Direction::S],
+        ('-', Direction::E | Direction::W) => vec![direction],
+        ('-', Direction::N | Direction::S) => vec![Direction::E, Direction::W],
+        ('/', Direction::N) => vec![Direction::E],
+        ('/', Direction::S) => vec![Direction::W],
+        ('/', Direction::E) => vec![Direction::N],
+        ('/', Direction::W) => vec![Direction::S],
+        ('\\', Direction::N) => vec![Direction::W],
+        ('\\', Direction::S) => vec![Direction::E],
+        ('\\', Direction::E) => vec![Direction::S],
+        ('\\', Direction::W) => vec![Direction::N],
+        _ => unreachable!("Unknown tile"),
+    };
 
-    match tile {
-        '.' => {
-            if let Some(cordinate) = is_in_bounds(cordinate, direction, grid) {
-                walk(cordinate, direction, grid)
-            }
+    for dir in next_directions {
+        if let Some(cordinate) = is_in_bounds(cordinate, dir, grid) {
+            walk(cordinate, dir, grid)
         }
-        '|' => match direction {
-            Direction::N | Direction::S => {
-                if let Some(cordinate) = is_in_bounds(cordinate, direction, grid) {
-                    walk(cordinate, direction, grid)
-                }
-            }
-            Direction::E | Direction::W => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::N, grid) {
-                    walk(cordinate, Direction::N, grid)
-                }
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::S, grid) {
-                    walk(cordinate, Direction::S, grid)
-                }
-            }
-        },
-        '-' => match direction {
-            Direction::E | Direction::W => {
-                if let Some(cordinate) = is_in_bounds(cordinate, direction, grid) {
-                    walk(cordinate, direction, grid)
-                }
-            }
-            Direction::N | Direction::S => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::E, grid) {
-                    walk(cordinate, Direction::E, grid)
-                }
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::W, grid) {
-                    walk(cordinate, Direction::W, grid)
-                }
-            }
-        },
-        '/' => match direction {
-            Direction::N => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::E, grid) {
-                    walk(cordinate, Direction::E, grid)
-                }
-            }
-            Direction::S => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::W, grid) {
-                    walk(cordinate, Direction::W, grid)
-                }
-            }
-            Direction::E => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::N, grid) {
-                    walk(cordinate, Direction::N, grid)
-                }
-            }
-            Direction::W => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::S, grid) {
-                    walk(cordinate, Direction::S, grid)
-                }
-            }
-        },
-        '\\' => match direction {
-            Direction::N => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::W, grid) {
-                    walk(cordinate, Direction::W, grid)
-                }
-            }
-            Direction::S => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::E, grid) {
-                    walk(cordinate, Direction::E, grid)
-                }
-            }
-            Direction::E => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::S, grid) {
-                    walk(cordinate, Direction::S, grid)
-                }
-            }
-            Direction::W => {
-                if let Some(cordinate) = is_in_bounds(cordinate, Direction::N, grid) {
-                    walk(cordinate, Direction::N, grid)
-                }
-            }
-        },
-        _ => unimplemented!("{tile} unimplemented"),
     }
 }
 
-fn is_in_bounds(
-    cordinate: Cordinate,
-    direction: Direction,
-    grid: &mut TooDee<(char, HashSet<Direction>)>
-) -> Option<Cordinate> {
-    let (x, y) = cordinate;
+fn is_in_bounds((x, y): Cordinate, direction: Direction, grid: &Grid) -> Option<Cordinate> {
     match direction {
-        Direction::N => {
-            if y > 0 {
-                Some((x, y - 1))
-            } else {
-                None
-            }
-        }
-        Direction::S => {
-            if y < grid.num_rows() - 1 {
-                Some((x, y + 1))
-            } else {
-                None
-            }
-        }
-        Direction::W => {
-            if x > 0 {
-                Some((x - 1, y))
-            } else {
-                None
-            }
-        }
-        Direction::E => {
-            if x < grid.num_cols() - 1 {
-                Some((x + 1, y))
-            } else {
-                None
-            }
-        }
+        Direction::N => (y > 0).then_some((x, y.saturating_sub(1))),
+        Direction::S => (y < grid.num_rows() - 1).then_some((x, y + 1)),
+        Direction::W => (x > 0).then_some((x.saturating_sub(1), y)),
+        Direction::E => (x < grid.num_cols() - 1).then_some((x + 1, y)),
     }
-}
-
-#[derive(Clone, Copy, PartialEq, Hash, Eq)]
-enum Direction {
-    N,
-    S,
-    W,
-    E,
 }
 
 #[cfg(test)]
@@ -188,6 +85,6 @@ mod tests {
 
     #[test]
     fn test_sample() {
-        assert_eq!(process(include_str!("./sample.txt")), 405);
+        assert_eq!(process(include_str!("./sample.txt")), 46);
     }
 }

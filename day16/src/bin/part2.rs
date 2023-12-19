@@ -21,12 +21,11 @@ fn main() {
 fn process(input: &str) -> usize {
     let width = input.chars().position(|c| c == '\n').expect("newline");
     let height = input.replace('\n', "").len() / width;
-    let grid = TooDee::from_vec(
+    let grid: Grid = TooDee::from_vec(
         width,
         height,
         input
             .replace('\n', "")
-            .trim()
             .chars()
             .map(|c| (c, HashSet::<Direction>::new()))
             .collect(),
@@ -43,45 +42,37 @@ fn process(input: &str) -> usize {
         .map(|(cordindate, direction)| {
             let mut cloned_grid = grid.clone();
             walk(cordindate, direction, &mut cloned_grid);
-            count_energised(&cloned_grid)
+            count_energised_cells(&cloned_grid)
         })
         .max()
         .unwrap()
 }
 
-fn count_energised(grid: &Grid) -> usize {
-    grid.into_iter().filter(|(_, set)| !set.is_empty()).count()
+fn count_energised_cells(grid: &Grid) -> usize {
+    grid.cells().filter(|(_, set)| !set.is_empty()).count()
 }
 
 fn walk(cordinate: Cordinate, direction: Direction, grid: &mut Grid) {
-    let (tile, directions) = &mut grid[cordinate];
-    if directions.contains(&direction) {
-        return;
+    let (tile, visited_directions) = &mut grid[cordinate];
+    if visited_directions.contains(&direction) {
+        return; 
     }
-    directions.insert(direction);
-    let next_directions = match tile {
-        '.' => vec![direction],
-        '|' => match direction {
-            Direction::N | Direction::S => vec![direction],
-            Direction::E | Direction::W => vec![Direction::N, Direction::S],
-        },
-        '-' => match direction {
-            Direction::E | Direction::W => vec![direction],
-            Direction::N | Direction::S => vec![Direction::E, Direction::W],
-        },
-        '/' => match direction {
-            Direction::N => vec![Direction::E],
-            Direction::S => vec![Direction::W],
-            Direction::E => vec![Direction::N],
-            Direction::W => vec![Direction::S],
-        },
-        '\\' => match direction {
-            Direction::N => vec![Direction::W],
-            Direction::S => vec![Direction::E],
-            Direction::E => vec![Direction::S],
-            Direction::W => vec![Direction::N],
-        },
-        _ => unreachable!("Unknown tile: {tile}")
+    visited_directions.insert(direction);
+    let next_directions = match (tile, direction) {
+        ('.', _) => vec![direction],
+        ('|', Direction::N | Direction::S) => vec![direction],
+        ('|', Direction::E | Direction::W) => vec![Direction::N, Direction::S],
+        ('-', Direction::E | Direction::W) => vec![direction],
+        ('-', Direction::N | Direction::S) => vec![Direction::E, Direction::W],
+        ('/', Direction::N) => vec![Direction::E],
+        ('/', Direction::S) => vec![Direction::W],
+        ('/', Direction::E) => vec![Direction::N],
+        ('/', Direction::W) => vec![Direction::S],
+        ('\\', Direction::N) => vec![Direction::W],
+        ('\\', Direction::S) => vec![Direction::E],
+        ('\\', Direction::E) => vec![Direction::S],
+        ('\\', Direction::W) => vec![Direction::N],
+        _ => unreachable!("Unknown tile"),
     };
 
     for dir in next_directions {
@@ -91,41 +82,12 @@ fn walk(cordinate: Cordinate, direction: Direction, grid: &mut Grid) {
     }
 }
 
-fn is_in_bounds(
-    cordinate: Cordinate,
-    direction: Direction,
-    grid: &mut Grid
-) -> Option<Cordinate> {
-    let (x, y) = cordinate;
+fn is_in_bounds((x, y): Cordinate, direction: Direction, grid: &Grid) -> Option<Cordinate> {
     match direction {
-        Direction::N => {
-            if y > 0 {
-                Some((x, y - 1))
-            } else {
-                None
-            }
-        }
-        Direction::S => {
-            if y < grid.num_rows() - 1 {
-                Some((x, y + 1))
-            } else {
-                None
-            }
-        }
-        Direction::W => {
-            if x > 0 {
-                Some((x - 1, y))
-            } else {
-                None
-            }
-        }
-        Direction::E => {
-            if x < grid.num_cols() - 1 {
-                Some((x + 1, y))
-            } else {
-                None
-            }
-        }
+        Direction::N => (y > 0).then_some((x, y.saturating_sub(1))),
+        Direction::S => (y < grid.num_rows() - 1).then_some((x, y + 1)),
+        Direction::W => (x > 0).then_some((x.saturating_sub(1), y)),
+        Direction::E => (x < grid.num_cols() - 1).then_some((x + 1, y)),
     }
 }
 

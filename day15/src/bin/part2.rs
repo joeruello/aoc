@@ -10,16 +10,16 @@ fn process(input: &str) -> u32 {
     for input in input.split(',') {
         if input.contains('=') {
             let (label, focal_length) = input.split_once('=').unwrap();
-            let value = (label.to_string(), focal_length.parse().unwrap());
+            let focal_length = focal_length.parse().unwrap();
             map.entry(hash(label))
                 .and_modify(|vec| {
                     if let Some(idx) = vec.iter().position(|(l, _)| l == label) {
-                        vec[idx] = value.clone()
+                        vec[idx] = (label.to_owned(), focal_length)
                     } else {
-                        vec.push_back(value.clone())
+                        vec.push_back((label.to_owned(), focal_length))
                     }
                 })
-                .or_insert(VecDeque::from([value.clone()]));
+                .or_insert(VecDeque::from([(label.to_string(), focal_length)]));
         } else {
             let label = &input[0..input.len() - 1];
             map.entry(hash(label)).and_modify(|v| {
