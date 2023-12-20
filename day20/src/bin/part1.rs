@@ -1,6 +1,6 @@
 use std::{
     collections::{HashMap, VecDeque},
-    iter, vec,
+    vec,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -11,7 +11,7 @@ enum Pulse {
 
 #[derive(Debug, Clone)]
 enum Module {
-    FlipFlip { on: bool },
+    FlipFlop { on: bool },
     Conjuction { memory: HashMap<String, Pulse> },
     Broadcast,
 }
@@ -19,7 +19,7 @@ enum Module {
 impl Module {
     fn flip(&mut self) {
         match self {
-            Module::FlipFlip { on } => {
+            Module::FlipFlop { on } => {
                 match on {
                     true => *on = false,
                     false => *on = true,
@@ -48,7 +48,7 @@ fn process(input: &str, button_presses: usize) -> usize {
                 module_name = "broadcaster";
                 modules.insert("broadcaster".to_string(), Module::Broadcast)
             }
-            "%" => modules.insert(module_name.to_string(), Module::FlipFlip { on: false }),
+            "%" => modules.insert(module_name.to_string(), Module::FlipFlop { on: false }),
             "&" => modules.insert(
                 module_name.to_string(),
                 Module::Conjuction {
@@ -100,7 +100,7 @@ fn process(input: &str, button_presses: usize) -> usize {
                         queue.push_back((pulse, dest, key))
                     }
                 }
-                Some(Module::FlipFlip { on }) => match (pulse, on) {
+                Some(Module::FlipFlop { on }) => match (pulse, on) {
                     (Pulse::Low, true) => {
                         for dest in destinations {
                             queue.push_back((Pulse::Low, dest, key))

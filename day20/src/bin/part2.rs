@@ -5,7 +5,7 @@ use std::{
 
 use num::Integer;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 enum Pulse {
     Low,
     High,
@@ -13,7 +13,7 @@ enum Pulse {
 
 #[derive(Debug, Clone)]
 enum Module {
-    FlipFlip { on: bool },
+    FlipFlop { on: bool },
     Conjuction { memory: HashMap<String, Pulse> },
     Broadcast,
 }
@@ -21,7 +21,7 @@ enum Module {
 impl Module {
     fn flip(&mut self) {
         match self {
-            Module::FlipFlip { on } => match on {
+            Module::FlipFlop { on } => match on {
                 true => *on = false,
                 false => *on = true,
             },
@@ -46,9 +46,9 @@ fn process(input: &str, target: String) -> usize {
         match module_type {
             "b" => {
                 module_name = "broadcaster";
-                modules.insert("broadcaster".to_string(), Module::Broadcast)
+                modules.insert(module_name.to_string(), Module::Broadcast)
             }
-            "%" => modules.insert(module_name.to_string(), Module::FlipFlip { on: false }),
+            "%" => modules.insert(module_name.to_string(), Module::FlipFlop { on: false }),
             "&" => modules.insert(
                 module_name.to_string(),
                 Module::Conjuction {
@@ -79,7 +79,6 @@ fn process(input: &str, target: String) -> usize {
         }
     }
 
-    let empty_vec = vec![];
     let mut queue = VecDeque::new();
 
     let mut parent_cycle_counts: HashMap<String, usize> = HashMap::new();
@@ -91,47 +90,39 @@ fn process(input: &str, target: String) -> usize {
     for num_presses in 1.. {
         queue.push_back((Pulse::Low, "broadcaster", "button"));
         while let Some((pulse, key, source)) = queue.pop_front() {
-            if pulse == Pulse::High && key == "mf" {
+            if pulse == Pulse::High && key == target_input {
                 parent_cycle_counts.entry(source.to_owned()).or_insert(num_presses);
             }
 
             let module = modules.get_mut(key);
-            let destinations = outputs.get(key).unwrap_or(&empty_vec);
-            match module {
-                Some(Module::Broadcast) => {
-                    for dest in destinations {
-                        queue.push_back((pulse, dest, key))
-                    }
-                }
-                Some(Module::FlipFlip { on }) => match (pulse, on) {
+            let output = match module {
+                Some(Module::Broadcast) => Some(pulse),
+                Some(Module::FlipFlop { on }) => match (pulse, on) {
                     (Pulse::Low, true) => {
-                        for dest in destinations {
-                            queue.push_back((Pulse::Low, dest, key))
-                        }
                         module.unwrap().flip();
+                        Some(Pulse::Low)
                     }
                     (Pulse::Low, false) => {
-                        for dest in destinations {
-                            queue.push_back((Pulse::High, dest, key))
-                        }
                         module.unwrap().flip();
+                        Some(Pulse::High)
                     }
-                    (Pulse::High, _) => {}
+                    (Pulse::High, _) => None
                 },
                 Some(Module::Conjuction { memory }) => {
                     memory.entry(source.to_string()).and_modify(|p| *p = pulse);
-
-                    let output = if memory.values().all(|p| *p == Pulse::High) {
-                        Pulse::Low
+                    if memory.values().all(|p| *p == Pulse::High) {
+                        Some(Pulse::Low)
                     } else {
-                        Pulse::High
-                    };
-
-                    for dest in destinations {
-                        queue.push_back((output, dest, key))
+                        Some(Pulse::High)
                     }
                 }
-                None => {} // "Output" modules
+                None => None // "Output" modules
+            };
+            
+            if let Some(pulse) = output {
+                for dest in outputs.get(key).unwrap() {
+                    queue.push_back((pulse, dest, key));
+                }
             }
         }
         if parent_cycle_counts.len() == target_input_inputs.len() {
