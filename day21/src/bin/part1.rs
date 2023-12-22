@@ -18,11 +18,15 @@ fn process(input: &str, steps: usize) -> usize {
         input.replace('\n', "").trim().chars().collect(),
     );
 
-    let mut positions: HashSet<Cordinate> = HashSet::from([find_start(&grid)]);
+    walk(&grid, steps)
+}
+
+fn walk(grid: &Grid, steps: usize) -> usize {
+    let mut positions: HashSet<Cordinate> = HashSet::from([find_start(grid)]);
     for _ in 0..steps {
         let mut next = HashSet::new();
         for cord in positions.into_iter() {
-            next.extend(neighbours(cord, &grid));
+            next.extend(neighbours(cord, grid));
         }
         positions = next;
     }

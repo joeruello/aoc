@@ -92,9 +92,8 @@ fn find_start(grid: &Grid) -> Cordinate {
 
 fn walk(grid: &Grid, steps: usize) -> isize {
     let bounds = (grid.num_cols() as isize, grid.num_rows() as isize);
-    let start = find_start(grid);
 
-    let mut positions: HashSet<Cordinate> = HashSet::from([start]);
+    let mut positions: HashSet<Cordinate> = HashSet::from([find_start(grid)]);
     for _ in 0..steps {
         let mut next = HashSet::new();
         for cord in positions.into_iter() {
