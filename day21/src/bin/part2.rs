@@ -92,16 +92,13 @@ fn find_start(grid: &Grid) -> Cordinate {
 
 fn walk(grid: &Grid, steps: usize) -> isize {
     let bounds = (grid.num_cols() as isize, grid.num_rows() as isize);
-
-    let mut positions: HashSet<Cordinate> = HashSet::from([find_start(grid)]);
-    for _ in 0..steps {
-        let mut next = HashSet::new();
-        for cord in positions.into_iter() {
-            next.extend(neighbours(cord, grid, bounds));
-        }
-        positions = next;
-    }
-    positions.len() as isize
+    (0..steps)
+        .fold(HashSet::from([find_start(grid)]), |p, _| 
+            p.into_iter()
+                .flat_map(|cord| neighbours(cord, grid, bounds))
+                .collect()
+        )
+        .len() as isize
 }
 
 fn neighbours((x, y): Cordinate, grid: &Grid, bounds: Cordinate) -> Vec<Cordinate> {

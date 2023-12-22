@@ -22,15 +22,13 @@ fn process(input: &str, steps: usize) -> usize {
 }
 
 fn walk(grid: &Grid, steps: usize) -> usize {
-    let mut positions: HashSet<Cordinate> = HashSet::from([find_start(grid)]);
-    for _ in 0..steps {
-        let mut next = HashSet::new();
-        for cord in positions.into_iter() {
-            next.extend(neighbours(cord, grid));
-        }
-        positions = next;
-    }
-    positions.len()
+    (0..steps)
+        .fold(HashSet::from([find_start(grid)]), |p, _| {
+            p.into_iter()
+                .flat_map(|cord| neighbours(cord, grid))
+                .collect()
+        })
+        .len()
 }
 
 fn neighbours((x, y): Cordinate, grid: &Grid) -> Vec<Cordinate> {
