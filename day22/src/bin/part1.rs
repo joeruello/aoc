@@ -88,21 +88,12 @@ fn main() {
     println!("Output: {}", process(input));
 }
 
-fn name(i: usize) -> char {
-    if i < 28 {
-        (i + 65) as u8 as char
-    } else {
-        'X'
-    }
-}
-
 fn process(input: &str) -> usize {
     let mut bricks = parse(input).expect("parses");
     bricks.sort();
 
     let mut supported_by = HashMap::new();
-    for (n, i) in bricks.clone().into_iter().map(|b| b.i()).enumerate() {
-        println!("{}/{}", n, bricks.len());
+    for (_, i) in bricks.clone().into_iter().map(|b| b.i()).enumerate() {
         while has_space_below(i, &bricks, &mut supported_by) {
             bricks.iter_mut().find(|b| b.i() == i).unwrap().drop();
         }
@@ -122,15 +113,16 @@ fn process(input: &str) -> usize {
 
 fn has_space_below(
     idx: usize,
-    bricks: &Vec<Brick>,
+    bricks: &[Brick],
     supported: &mut HashMap<usize, HashSet<usize>>,
 ) -> bool {
     let brick = bricks.iter().find(|b| b.i() == idx).unwrap();
     if brick.z0() == 1 {
         return false;
     }
+    let candiate_bricks = bricks.iter().filter(|b| brick.z0() -1 == b.z1()).collect_vec();
     for xy in brick.xy() {
-        for potential_support in bricks {
+        for potential_support in candiate_bricks.iter() {
             if potential_support.i() == brick.i() || potential_support.z0() > brick.z0() {
                 continue;
             }
@@ -159,23 +151,8 @@ fn can_be_disintergrated(
                 .expect("should have an entry if its supported");
             s.len() > 1
         });
-        if res {
-            println!(
-                "{} can be disintegrated as it's supported bricks have other supports.",
-                name(brick.i())
-            );
-        } else {
-            println!(
-                "{} cannot be disintegrated as it is the sole support for another block",
-                name(brick.i())
-            );
-        }
         res
     } else {
-        println!(
-            "{} can be disintegrated as it does not support any other bricks.",
-            name(brick.i())
-        );
         true
     }
 }
