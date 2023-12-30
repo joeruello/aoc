@@ -124,8 +124,6 @@ fn process(input: &str, search_space: RangeInclusive<isize>) -> f64 {
     panic!("no solution found")
 }
 
-
-
 fn all_intersect((x, y): (isize, isize), stones: &[Hailstone]) -> Option<(f64, f64)> {
     let origin_vel = Vec3(x as f64, y as f64, 0.0);
     let mut collision_point = None;
@@ -151,7 +149,6 @@ fn all_intersect((x, y): (isize, isize), stones: &[Hailstone]) -> Option<(f64, f
 
     collision_point
 }
-
 
 
 fn all_intersect_with_z(v: Vec3, collision: (f64, f64), stones: &[Hailstone]) -> Option<Vec3> {
@@ -209,15 +206,4 @@ mod tests {
         assert_eq!(process(include_str!("./sample.txt"), -5..=5), 47.0);
     }
 
-    #[test]
-    fn test_intersect() {
-        let stones = parse(include_str!("./sample.txt"));
-        all_intersect((-3, 1), &stones);
-    }
-
-    #[test]
-    fn test_intersect_z() {
-        let stones = parse(include_str!("./sample.txt"));
-        all_intersect_with_z(Vec3(-3.0, 1.0, 2.0), (9.0, 18.0), &stones);
-    }
 }
