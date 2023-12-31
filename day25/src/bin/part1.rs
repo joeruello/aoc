@@ -1,9 +1,6 @@
-use itertools::*;
+use itertools::Itertools;
 use rand::seq::IteratorRandom;
-use std::{
-    collections::{HashMap, HashSet, VecDeque},
-    vec,
-};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 type Graph = HashMap<String, HashSet<String>>;
 type EdgeKey = (String, String);
@@ -40,9 +37,7 @@ fn parse(input: &str) -> Graph {
     let mut edges: Graph = HashMap::new();
     for line in input.lines() {
         let (src, dests) = line.split_once(": ").unwrap();
-        let dests: Vec<_> = dests.split_whitespace().collect();
-
-        for dest in dests {
+        for dest in dests.split_whitespace() {
             edges
                 .entry(dest.to_string())
                 .and_modify(|e| {
@@ -68,7 +63,7 @@ fn find_cuts(graph: &Graph) -> Vec<EdgeKey> {
     // Randomly choose 2 nodes and find a path between then, recording the frequencies of
     // visiting each edge. Assumption is that over a large enough sample that "bridge" nodes
     // we're looking to cut will have the highest frequencies
-    for _ in 0..1000 {
+    for _ in 0..500 {
         let (a, b) = graph
             .keys()
             .choose_multiple(rng, 2)
@@ -79,18 +74,14 @@ fn find_cuts(graph: &Graph) -> Vec<EdgeKey> {
     }
 
     // Sort candidate cuts by frequency
-    let candidates = frequencies
-        .iter_mut()
-        .sorted_by_key(|(_, v)| **v)
-        .rev()
-        .collect_vec();
+    let candidates = frequencies.iter_mut().sorted_by_key(|(_node, count)| **count).rev();
 
     // Find the top 3 cuts, we assume we that a node can't be
     // directly involved in more than one cut
     let mut visited = HashSet::new();
     let mut cuts = vec![];
 
-    for ((a, b), _) in candidates.into_iter() {
+    for ((a, b), _) in candidates {
         if visited.contains(a) || visited.contains(b) {
             continue;
         }
@@ -118,16 +109,21 @@ fn do_cuts(graph: &Graph, cuts: &[EdgeKey]) -> Graph {
     graph
 }
 
-fn breadth_first_search(a: &str, b: &str, edges: &Graph, frequencies: &mut HashMap<EdgeKey, usize>) {
+fn breadth_first_search(
+    a: &str,
+    b: &str,
+    edges: &Graph,
+    frequencies: &mut HashMap<EdgeKey, usize>,
+) {
     let mut queue = VecDeque::from([a]);
-    let mut visisted = HashSet::new();
+    let mut visited = HashSet::new();
     while let Some(src) = queue.pop_front() {
-        visisted.insert(src);
+        visited.insert(src);
         if src == b {
             return;
         }
         for dest in edges.get(src).unwrap() {
-            if !visisted.contains(dest.as_str()) {
+            if !visited.contains(dest.as_str()) {
                 frequencies
                     .entry(create_key(src, dest))
                     .and_modify(|f| *f += 1)
@@ -149,16 +145,16 @@ fn create_key(a: &str, b: &str) -> EdgeKey {
 
 fn count_reachable_nodes(node: &str, edges: &Graph) -> usize {
     let mut queue = VecDeque::from([node]);
-    let mut visisted = HashSet::new();
+    let mut visited = HashSet::new();
     while let Some(node) = queue.pop_front() {
-        visisted.insert(node);
+        visited.insert(node);
         for edge in edges.get(node).unwrap() {
-            if !visisted.contains(edge.as_str()) {
+            if !visited.contains(edge.as_str()) {
                 queue.push_back(edge)
             }
         }
     }
-    visisted.len()
+    visited.len()
 }
 
 #[cfg(test)]
