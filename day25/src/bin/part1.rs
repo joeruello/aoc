@@ -37,6 +37,10 @@ fn process(input: &str) -> usize {
 
     loop {
         let mut frequencies: HashMap<(String, String), usize> = HashMap::new();
+
+        // Randomly choose 2 nodes and find a path between then, recording the frequencies of
+        // visiting each edge. Assumption is that over a large enough sample that "bridge" nodes
+        // we're looking to cut will have the highest frequencies 
         for _ in 0..1000 {
             let (a, b) = nodes
                 .iter()
@@ -47,16 +51,20 @@ fn process(input: &str) -> usize {
             search(a, b, &edges, &mut frequencies)
         }
 
+        // Sort candidate cuts by frequency
         let candidates = frequencies
             .iter_mut()
             .sorted_by_key(|(_, v)| **v)
             .rev()
             .collect_vec();
 
+
+
+        // Find the top 3 cuts, we assume we that a node can't be 
+        // directly involved in more than one cut
         let mut visited = HashSet::new();
         let mut cuts = vec![];
-
-        // Find the top 3 cuts, we assume we only cut one edge once
+        
         for ((a, b), _) in candidates.into_iter() {
             if visited.contains(a) || visited.contains(b) {
                 continue;
@@ -69,8 +77,8 @@ fn process(input: &str) -> usize {
             }
         }
 
+        // Do the cuts !
         let mut cut_edges = edges.clone();
-
         for (a, b) in cuts.iter() {
             cut_edges.entry(a.to_string()).and_modify(|edges| {
                 let idx = edges
@@ -89,6 +97,8 @@ fn process(input: &str) -> usize {
             });
         }
 
+        // Grab one of the cuts and count the number of nodes 
+        // on each side of the cut
         let (a, b) = cuts.first().unwrap();
         let size_a = count_graph(a, &cut_edges);
         let size_b = count_graph(b, &cut_edges);
@@ -98,9 +108,12 @@ fn process(input: &str) -> usize {
         println!("Graph A Size: {size_a}");
         println!("Graph B Size: {size_b}");
 
+        // If we're successully cut the graph in 2, the sizes of the subgraph
+        // should equal the original and we've found solution
         if size_a + size_b == nodes.len() {
             return size_a * size_b;
         } else {
+            // There's an element of randomness, so if we fail, try again (:
             println!("Failed to find cut, trying again :)")
         }
     }
