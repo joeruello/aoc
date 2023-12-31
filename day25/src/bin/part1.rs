@@ -5,8 +5,8 @@ use std::{
     vec,
 };
 
-type Graph = HashMap<String, Vec<String>>;
-type EdgeKey = (String,String);
+type Graph = HashMap<String, HashSet<String>>;
+type EdgeKey = (String, String);
 
 fn main() {
     let input = include_str!("./input.txt");
@@ -45,13 +45,17 @@ fn parse(input: &str) -> Graph {
         for dest in dests {
             edges
                 .entry(dest.to_string())
-                .and_modify(|e| e.push(src.to_string()))
-                .or_insert_with(|| vec![src.to_string()]);
+                .and_modify(|e| {
+                    e.insert(src.to_string());
+                })
+                .or_insert_with(|| HashSet::from([src.to_string()]));
 
             edges
                 .entry(src.to_string())
-                .and_modify(|e| e.push(dest.to_string()))
-                .or_insert_with(|| vec![dest.to_string()]);
+                .and_modify(|e| {
+                    e.insert(dest.to_string());
+                })
+                .or_insert_with(|| HashSet::from([dest.to_string()]));
         }
     }
     edges
@@ -65,12 +69,13 @@ fn find_cuts(graph: &Graph) -> Vec<EdgeKey> {
     // visiting each edge. Assumption is that over a large enough sample that "bridge" nodes
     // we're looking to cut will have the highest frequencies
     for _ in 0..1000 {
-        let (a, b) = graph.keys()
+        let (a, b) = graph
+            .keys()
             .choose_multiple(rng, 2)
             .into_iter()
             .collect_tuple()
             .unwrap();
-        bfs(a, b, graph, &mut frequencies)
+        breadth_first_search(a, b, graph, &mut frequencies)
     }
 
     // Sort candidate cuts by frequency
@@ -103,30 +108,17 @@ fn do_cuts(graph: &Graph, cuts: &[EdgeKey]) -> Graph {
     let mut graph = graph.clone();
     for (a, b) in cuts.iter() {
         graph.entry(a.to_string()).and_modify(|edges| {
-            let idx = edges
-                .iter()
-                .position(|e| e == b)
-                .expect("Should be an edge");
-            edges.remove(idx);
+            edges.remove(b);
         });
 
         graph.entry(b.to_string()).and_modify(|edges| {
-            let idx = edges
-                .iter()
-                .position(|e| e == a)
-                .expect("Should be an edge");
-            edges.remove(idx);
+            edges.remove(a);
         });
     }
     graph
 }
 
-fn bfs(
-    a: &str,
-    b: &str,
-    edges: &Graph,
-    frequencies: &mut HashMap<EdgeKey, usize>,
-) {
+fn breadth_first_search(a: &str, b: &str, edges: &Graph, frequencies: &mut HashMap<EdgeKey, usize>) {
     let mut queue = VecDeque::from([a]);
     let mut visisted = HashSet::new();
     while let Some(src) = queue.pop_front() {
