@@ -16,7 +16,7 @@ fn process(input: &str) -> usize {
         let cuts = find_cuts(&graph);
         let cut_graph = do_cuts(&graph, &cuts);
 
-        let (a, b) = cuts.first().unwrap();
+        let (a, b) = cuts.first().expect("Should always be exactly 3 cuts");
         let size_a = count_reachable_nodes(a, &cut_graph);
         let size_b = count_reachable_nodes(b, &cut_graph);
 
