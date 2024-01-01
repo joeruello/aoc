@@ -180,8 +180,6 @@ fn parse(input: &str) -> Result<Vec<Brick>, Box<dyn Error>> {
 mod tests {
     use super::*;
 
-
-
     #[test]
     fn test_volume() {
         let b = Brick(Vec3(0,0,1), Vec3(0,0,10),0);
@@ -202,19 +200,3 @@ mod tests {
         assert_eq!(process(include_str!("./sample.txt")), 5);
     }
 }
-
-// A 0
-// B 1
-// C 2
-// D 3
-// E 4
-// F 5
-// G 6
-
-//Brick A is the only brick supporting bricks B and C.
-// Brick B is one of two bricks supporting brick D and brick E.
-// Brick C is the other brick supporting brick D and brick E.
-// Brick D supports brick F.
-// Brick E also supports brick F.
-// Brick F supports brick G.
-// Brick G isn't supporting any bricks.

@@ -1,31 +1,21 @@
 use std::ops::RangeInclusive;
-
+use glam::{DVec2, DVec3, Vec3Swizzles};
 use itertools::Itertools;
 
-#[derive(Debug, Clone, Copy)]
-struct Vec3(f64, f64, f64);
-impl Vec3 {
-    fn x(&self) -> f64 {
-        self.0
-    }
-    fn y(&self) -> f64 {
-        self.1
-    }
-}
 
 #[derive(Debug, Clone, Copy)]
 struct Hailstone {
-    pos: Vec3,
-    vel: Vec3,
+    pos: DVec3,
+    vel: DVec3,
 }
 
 impl Hailstone {
-    fn intersects(&self, other: &Hailstone) -> Option<(f64, f64)> {
-        let a = self.vel.y() / self.vel.x();
-        let c = self.pos.y() - a * self.pos.x();
+    fn intersects(&self, other: &Hailstone) -> Option<DVec2> {
+        let a = self.vel.y / self.vel.x;
+        let c = self.pos.y - a * self.pos.x;
 
-        let b = other.vel.y() / other.vel.x();
-        let d = other.pos.y() - b * other.pos.x();
+        let b = other.vel.y / other.vel.x;
+        let d = other.pos.y - b * other.pos.x;
 
         if a == b && b != d {
             return None;
@@ -35,16 +25,12 @@ impl Hailstone {
         let px = (d - c) / (a - b);
         let py = a * ((d - c) / (a - b)) + c;
 
-        Some((px, py))
+        Some((px, py).into()) 
     }
 
-    fn is_moving_towards(&self, point: (f64,f64)) -> bool {
-        // vector towards then point
-        let vx = point.0 - self.pos.x();
-        let vy = point.1 - self.pos.y();
-
-        // dot product w/ velocity
-        vx * self.vel.x() + vy * self.vel.y() > 0.0
+    fn is_moving_towards(&self, point: DVec2) -> bool {
+        let vp = point - self.pos.xy();
+        vp.dot(self.vel.xy()) > 0.0
     }
 }
 
@@ -62,7 +48,7 @@ fn process(input: &str, bounds: RangeInclusive<f64>) -> usize {
             if !(a.is_moving_towards(point) && b.is_moving_towards(point)) {
                 continue;
             }
-            if bounds.contains(&point.0) && bounds.contains(&point.1) {
+            if bounds.contains(&point.x) && bounds.contains(&point.y) {
                 future_intersections +=1
             }
         }
@@ -87,8 +73,8 @@ fn parse(input: &str) -> Vec<Hailstone> {
                 .collect_tuple()
                 .unwrap();
             Hailstone {
-                pos: Vec3(px, py, pz),
-                vel: Vec3(vx, vy, vz),
+                pos: (px, py, pz).into(),
+                vel: (vx, vy, vz).into(),
             }
         })
         .collect()
@@ -100,6 +86,6 @@ mod tests {
 
     #[test]
     fn test_sample() {
-        assert_eq!(process(include_str!("./sample.txt"), 7.0..=27.0), 405);
+        assert_eq!(process(include_str!("./sample.txt"), 7.0..=27.0), 2);
     }
 }
