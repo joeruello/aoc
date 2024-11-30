@@ -224,7 +224,7 @@ fn process(input: &str) -> usize {
 }
 
 fn main() {
-    let input = include_str!("./input.txt");
+    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
     println!("Output: {}", process(input));
 }
 

@@ -35,7 +35,7 @@ impl Hailstone {
 }
 
 fn main() {
-    let input = include_str!("./input.txt");
+    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
     println!("Output: {}", process(input, 200000000000000.0..=400000000000000.0));
 }
 
