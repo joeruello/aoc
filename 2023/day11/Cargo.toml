@@ -1,8 +1,9 @@
 [package]
-name = "day08-23"
+name = "day11-23"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 common = { path = "../../common" }
-num = "0.4.1"
+grid = "0.12.0"
+itertools = "0.12.0"

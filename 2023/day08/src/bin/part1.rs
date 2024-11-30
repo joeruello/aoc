@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 fn main() {
     let input: String = common::AocInput::fetch(2023, 8).unwrap().into();
-    println!("Output: {}", process(input));
+    println!("Output: {}", process(&input));
 }
 
 fn process(input: &str) -> u64 {
