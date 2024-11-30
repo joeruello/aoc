@@ -1,3 +1,3 @@
-# aoc23
+# aoc
 
-Solutions, in rust, for [Advent of Code 2023](https://adventofcode.com/)
+Solutions, in rust, for [Advent of Code](https://adventofcode.com/)
