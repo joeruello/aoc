@@ -5,7 +5,7 @@ use toodee::{TooDee, TooDeeOps};
 type Cordinate = (usize, usize);
 type Grid = TooDee<Tile>;
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 18).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

@@ -2,7 +2,7 @@ use itertools::Itertools;
 use toodee::{TooDee, TooDeeOps};
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 13).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

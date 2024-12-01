@@ -167,6 +167,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "22ec99545bb0ed0ea7bb9b8e1e9122ea386ff8a48c0922e43f36d45ab09e0e80"
 
 [[package]]
+name = "day01-15"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
 name = "day01-23"
 version = "0.1.0"
 dependencies = [
@@ -174,7 +181,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "day01-24"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
+name = "day02-15"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "itertools 0.13.0",
+]
+
+[[package]]
 name = "day02-23"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
+name = "day03-15"
 version = "0.1.0"
 dependencies = [
  "common",
@@ -189,10 +218,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "day04-15"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "md5",
+]
+
+[[package]]
 name = "day04-23"
 version = "0.1.0"
 dependencies = [
  "common",
+]
+
+[[package]]
+name = "day05-15"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "common",
+ "itertools 0.13.0",
 ]
 
 [[package]]
@@ -205,9 +251,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "day06-15"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "itertools 0.13.0",
+]
+
+[[package]]
 name = "day06-23"
 version = "0.1.0"
 dependencies = [
+ "common",
+]
+
+[[package]]
+name = "day07-15"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
  "common",
 ]
 
@@ -232,7 +294,7 @@ name = "day09-23"
 version = "0.1.0"
 dependencies = [
  "common",
- "itertools",
+ "itertools 0.12.1",
  "num",
 ]
 
@@ -241,7 +303,7 @@ name = "day10-23"
 version = "0.1.0"
 dependencies = [
  "common",
- "itertools",
+ "itertools 0.12.1",
  "num",
 ]
 
@@ -251,7 +313,7 @@ version = "0.1.0"
 dependencies = [
  "common",
  "grid",
- "itertools",
+ "itertools 0.12.1",
 ]
 
 [[package]]
@@ -266,7 +328,7 @@ name = "day13-23"
 version = "0.1.0"
 dependencies = [
  "common",
- "itertools",
+ "itertools 0.12.1",
  "toodee",
 ]
 
@@ -307,7 +369,7 @@ version = "0.1.0"
 dependencies = [
  "common",
  "indicatif",
- "itertools",
+ "itertools 0.12.1",
  "toodee",
 ]
 
@@ -340,11 +402,11 @@ name = "day22-23"
 version = "0.1.0"
 dependencies = [
  "common",
- "itertools",
+ "itertools 0.12.1",
 ]
 
 [[package]]
-name = "day23"
+name = "day23-23"
 version = "0.1.0"
 dependencies = [
  "common",
@@ -358,7 +420,7 @@ version = "0.1.0"
 dependencies = [
  "common",
  "glam",
- "itertools",
+ "itertools 0.12.1",
  "num",
 ]
 
@@ -367,7 +429,7 @@ name = "day25-23"
 version = "0.1.0"
 dependencies = [
  "common",
- "itertools",
+ "itertools 0.12.1",
  "rand",
 ]
 
@@ -850,6 +912,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "itertools"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
+dependencies = [
+ "either",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -893,6 +964,12 @@ name = "log"
 version = "0.4.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
+
+[[package]]
+name = "md5"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "490cc448043f947bae3cbee9c203358d62dbee0db12107a74be5c30ccfd09771"
 
 [[package]]
 name = "memchr"

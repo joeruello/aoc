@@ -35,7 +35,7 @@ impl Hailstone {
 }
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 24).unwrap().into();
     println!("Output: {}", process(&input, 200000000000000.0..=400000000000000.0));
 }
 

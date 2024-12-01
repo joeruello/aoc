@@ -84,7 +84,7 @@ impl PartialOrd for Brick {
 }
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 22).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

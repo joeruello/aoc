@@ -14,7 +14,7 @@ enum Direction {
 }
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 16).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

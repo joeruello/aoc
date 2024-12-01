@@ -1,7 +1,7 @@
 use std::collections::{HashMap, VecDeque};
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 15).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

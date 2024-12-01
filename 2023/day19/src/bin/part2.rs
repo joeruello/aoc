@@ -5,7 +5,7 @@ use std::{
 };
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 19).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

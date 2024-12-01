@@ -29,6 +29,25 @@ pub fn download_input(year: i16, day: i16) -> Result<String> {
     Ok(res.text_with_charset("utf8")?)
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Direction {
+    N,
+    S,
+    E,
+    W,
+}
+
+impl Direction {
+    pub fn opposite(&self) -> Direction {
+        match self {
+            Direction::N => Direction::S,
+            Direction::S => Direction::N,
+            Direction::E => Direction::W,
+            Direction::W => Direction::E,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

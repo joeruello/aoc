@@ -61,7 +61,7 @@ fn parse(input: &str) -> Grid {
 }
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 23).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

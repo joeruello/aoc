@@ -1,7 +1,7 @@
 use toodee::{TooDee, TooDeeOps, TooDeeOpsMut};
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 14).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

@@ -6,7 +6,7 @@ type Graph = HashMap<String, HashSet<String>>;
 type EdgeKey = (String, String);
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 25).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

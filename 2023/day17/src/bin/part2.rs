@@ -48,7 +48,7 @@ impl PartialOrd for State {
 }
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 17).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

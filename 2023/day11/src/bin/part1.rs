@@ -9,7 +9,7 @@ enum Tile {
 }
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 11).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

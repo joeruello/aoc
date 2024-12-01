@@ -1,27 +1,8 @@
+use common::Direction;
 use std::collections::{BinaryHeap, HashMap, HashSet};
 use toodee::{TooDee, TooDeeOps};
-
 type Cordinate = (usize, usize);
 type Grid = TooDee<usize>;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum Direction {
-    N,
-    S,
-    E,
-    W,
-}
-
-impl Direction {
-    fn opposite(&self) -> Direction {
-        match self {
-            Direction::N => Direction::S,
-            Direction::S => Direction::N,
-            Direction::E => Direction::W,
-            Direction::W => Direction::E,
-        }
-    }
-}
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 struct State {
@@ -48,7 +29,7 @@ impl PartialOrd for State {
 }
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 17).unwrap().into();
     println!("Output: {}", process(&input));
 }
 
@@ -137,11 +118,13 @@ fn dijkstra(grid: &Grid, start: Cordinate, dest: Cordinate) -> Option<usize> {
             heap.push(next);
         }
         if iters % 10000 == 0 {
-            println!("{iters} - Checking {coords:?} {dir:?} {steps:?} Max X: {max_x}, Max Y: {max_y}");
+            println!(
+                "{iters} - Checking {coords:?} {dir:?} {steps:?} Max X: {max_x}, Max Y: {max_y}"
+            );
 
             for y in 0..grid.num_rows() {
                 for x in 0..grid.num_cols() {
-                    if visited.contains(&(x,y)) {
+                    if visited.contains(&(x, y)) {
                         print!("X")
                     } else {
                         print!(".")
@@ -149,7 +132,6 @@ fn dijkstra(grid: &Grid, start: Cordinate, dest: Cordinate) -> Option<usize> {
                 }
                 println!()
             }
-
         }
     }
 

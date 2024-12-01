@@ -121,7 +121,7 @@ fn find_start(map: &[Vec<Tile>]) -> Point {
 }
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 11).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 10).unwrap().into();
     println!("Output: {}", process(&input));
 }
 

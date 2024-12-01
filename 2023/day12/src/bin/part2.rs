@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 fn main() {
-    let input: String = common::AocInput::fetch(2023, 2).unwrap().into();
+    let input: String = common::AocInput::fetch(2023, 12).unwrap().into();
     println!("Output: {}", process(&input));
 }
 
