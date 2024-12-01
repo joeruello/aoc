@@ -6,25 +6,16 @@ fn main() {
 }
 
 fn process(input: &str) -> usize {
-    let pairs: Vec<_> = input
-        .lines()
-        .map(|l| {
-            let (a, b) = l.split_once("   ").unwrap();
-            let a = a.parse::<usize>().unwrap();
-            let b = b.parse::<usize>().unwrap();
-            (a, b)
-        })
-        .collect();
-
     let mut left = vec![];
     let mut right = HashMap::<usize, usize>::new();
 
-    for (a, b) in pairs {
+    input.lines().for_each(|l| {
+        let (a, b) = l.split_once("   ").unwrap();
+        let a = a.parse::<usize>().unwrap();
+        let b = b.parse::<usize>().unwrap();
         left.push(a);
         right.entry(b).and_modify(|f| *f += 1).or_insert(1);
-    }
-
-    left.sort();
+    });
 
     left.into_iter()
         .map(|a| {

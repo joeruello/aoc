@@ -4,7 +4,7 @@ fn main() {
 }
 
 fn process(input: &str) -> usize {
-    let pairs: Vec<_> = input
+    let (mut left, mut right): (Vec<_>, Vec<_>) = input
         .lines()
         .map(|l| {
             let (a, b) = l.split_once("   ").unwrap();
@@ -13,14 +13,6 @@ fn process(input: &str) -> usize {
             (a, b)
         })
         .collect();
-
-    let mut left = vec![];
-    let mut right = vec![];
-
-    for (a, b) in pairs {
-        left.push(a);
-        right.push(b);
-    }
 
     left.sort();
     right.sort();
