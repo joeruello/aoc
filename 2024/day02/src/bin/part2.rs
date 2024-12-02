@@ -11,33 +11,33 @@ fn process(input: &str) -> usize {
         .filter(|l| -> bool {
             let levels = l
                 .split_whitespace()
-                .map(|n| n.parse::<usize>().unwrap())
+                .map(|n| n.parse::<isize>().unwrap())
                 .collect_vec();
 
+            let len = levels.len();
             match is_safe(&levels) {
                 true => true,
                 false => levels
-                    .clone()
                     .into_iter()
-                    .combinations(levels.len() - 1)
+                    .combinations(len - 1)
                     .any(|l| is_safe(&l)),
             }
         })
         .count()
 }
 
-fn is_safe(levels: &Vec<usize>) -> bool {
-    let reversed = levels.clone().into_iter().rev().collect_vec();
-    let mut sorted = levels.clone();
-    sorted.sort();
-
-    if *levels != sorted && reversed != sorted {
-        return false;
-    }
-
-    for (a, b) in sorted.into_iter().tuple_windows() {
+fn is_safe(levels: &[isize]) -> bool {
+    let mut direction = None;
+    for (a, b) in levels.iter().tuple_windows() {
         let diff = b - a;
-        if !(1..=3).contains(&diff) {
+        let signum = diff.signum();
+        if direction.is_some_and(|dir| signum != dir) {
+            return false;
+        } else if direction.is_none() {
+            direction = Some(signum)
+        }
+
+        if !(1..=3).contains(&diff.abs()) {
             return false;
         }
     }
