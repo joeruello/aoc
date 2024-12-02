@@ -1,21 +1,24 @@
 use std::collections::HashMap;
 
+use common::Itertools;
+
 fn main() {
     let input: String = common::AocInput::fetch(2024, 1).unwrap().into();
     println!("Output: {}", process(&input));
 }
 
 fn process(input: &str) -> usize {
-    let mut left = vec![];
-    let mut right = HashMap::<usize, usize>::new();
+    let (mut left, mut right): (Vec<_>, Vec<_>) = input
+        .lines()
+        .map(|l| {
+            let (a, b) = l.split_once("   ").unwrap();
+            let a = a.parse::<usize>().unwrap();
+            let b = b.parse::<usize>().unwrap();
+            (a, b)
+        })
+        .collect();
 
-    input.lines().for_each(|l| {
-        let (a, b) = l.split_once("   ").unwrap();
-        let a = a.parse::<usize>().unwrap();
-        let b = b.parse::<usize>().unwrap();
-        left.push(a);
-        right.entry(b).and_modify(|f| *f += 1).or_insert(1);
-    });
+    let right = right.into_iter().counts();
 
     left.into_iter()
         .map(|a| {

@@ -1,6 +1,8 @@
-use anyhow::Result;
 use reqwest::blocking::Client;
 use std::env;
+
+pub use anyhow::Result;
+pub use itertools::Itertools;
 
 #[derive(Debug, Clone)]
 pub struct AocInput(String);
