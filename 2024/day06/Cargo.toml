@@ -1,0 +1,12 @@
+[package]
+name = "day06-24"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+common = { path = "../../common" }
+rayon = "1.10.0"
+toodee = "0.5.0"
+
