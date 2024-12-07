@@ -1,5 +1,3 @@
-use std::usize;
-
 use common::Itertools;
 
 fn main() {
@@ -28,8 +26,8 @@ fn process(input: &str) -> usize {
 fn guess_operator(nums: &[usize], result: usize) -> bool {
     let add = nums[0] + nums[1];
     let mul = nums[0] * nums[1];
-    let concat = format!("{}{}", nums[0], nums[1]).parse::<usize>().unwrap();
-
+    //let concat = format!("{}{}", nums[0], nums[1]).parse::<usize>().unwrap();
+    let concat = concat(nums[0], nums[1]);
     match nums.len() {
         2 => add == result || mul == result || concat == result,
         _ => {
@@ -38,4 +36,8 @@ fn guess_operator(nums: &[usize], result: usize) -> bool {
                 || guess_operator(&[&[concat], &nums[2..]].concat(), result)
         }
     }
+}
+
+fn concat(a: usize, b: usize) -> usize {
+    a * 10usize.pow(b.ilog10() + 1) + b
 }
