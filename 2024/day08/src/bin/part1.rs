@@ -23,10 +23,7 @@ fn process(input: &str) -> usize {
     for point in (0..width).cartesian_product(0..height) {
         match grid[point] {
             '.' => continue,
-            c => antennas
-                .entry(c)
-                .and_modify(|v| v.push(point))
-                .or_insert(vec![point]),
+            c => antennas.entry(c).or_default().push(point),
         };
     }
 
