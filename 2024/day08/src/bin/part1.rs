@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 use common::Itertools;
-use toodee::TooDee;
+use toodee::{TooDee, TooDeeOps};
 
 fn main() {
     let input: String = common::AocInput::fetch(2024, 8).unwrap().into();
@@ -17,73 +17,45 @@ fn process(input: &str) -> usize {
         input.chars().filter(|c| !c.is_whitespace()).collect_vec(),
     );
 
-    let mut antena: HashMap<char, Vec<(usize, usize)>> = HashMap::new();
+    let mut antennas: HashMap<char, Vec<(usize, usize)>> = HashMap::new();
     let mut antinodes: HashSet<(usize, usize)> = HashSet::new();
 
     for point in (0..width).cartesian_product(0..height) {
         match grid[point] {
             '.' => continue,
-            c => antena
+            c => antennas
                 .entry(c)
                 .and_modify(|v| v.push(point))
                 .or_insert(vec![point]),
         };
     }
 
-    for a in antena.values() {
+    for a in antennas.values() {
         for ((x1, y1), (x2, y2)) in a.iter().copied().tuple_combinations() {
             let dy = y1 as isize - y2 as isize;
             let dx = x1 as isize - x2 as isize;
 
-            if let Some(p) = (x1, y1).add((dx, dy)) {
-                if p.0 < width && p.1 < height {
-                    antinodes.insert(p);
-                }
+            if let Some(np) = find_point((x1, y1), (dx, dy), grid.size()) {
+                antinodes.insert(np);
             }
 
-            if let Some(p) = (x2, y2).sub((dx, dy)) {
-                if p.0 < width && p.1 < height {
-                    antinodes.insert(p);
-                }
+            if let Some(np) = find_point((x2, y2), (-dx, -dy), grid.size()) {
+                antinodes.insert(np);
             }
         }
-    }
-
-    for y in 0..height {
-        for x in 0..width {
-            if grid[(x, y)] != '.' {
-                print!("{}", grid[(x, y)]);
-            } else if antinodes.contains(&(x, y)) {
-                print!("#");
-            } else {
-                print!(".");
-            }
-        }
-        println!();
     }
 
     antinodes.len()
 }
 
-trait PointOps: Sized {
-    fn add(&self, d: (isize, isize)) -> Option<Self>;
-    fn sub(&self, d: (isize, isize)) -> Option<Self>;
-}
-
-impl PointOps for (usize, usize) {
-    fn add(&self, (dx, dy): (isize, isize)) -> Option<(usize, usize)> {
-        Some((
-            self.0.checked_add_signed(dx)?,
-            self.1.checked_add_signed(dy)?,
-        ))
-    }
-
-    fn sub(&self, (dx, dy): (isize, isize)) -> Option<(usize, usize)> {
-        Some((
-            self.0.checked_add_signed(-dx)?,
-            self.1.checked_add_signed(-dy)?,
-        ))
-    }
+fn find_point(
+    (x0, y0): (usize, usize),
+    (dx, dy): (isize, isize),
+    (width, height): (usize, usize),
+) -> Option<(usize, usize)> {
+    let x = x0.checked_add_signed(dx)?;
+    let y = y0.checked_add_signed(dy)?;
+    (x < width && y < height).then_some((x, y))
 }
 
 #[cfg(test)]
