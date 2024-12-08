@@ -37,8 +37,12 @@ fn process(input: &str) -> usize {
 
             let mut p1 = (x2, y2);
             while let Some(np) = find_point(p1, (dx, dy), grid.size()) {
-                antinodes.insert(np);
-                p1 = np;
+                if np.0 < width && np.1 < height {
+                    antinodes.insert(np);
+                    p1 = np;
+                } else {
+                    break;
+                }
             }
 
             let mut p2 = (x1, y1);
@@ -46,6 +50,8 @@ fn process(input: &str) -> usize {
                 if np.0 < width && np.1 < height {
                     antinodes.insert(np);
                     p2 = np;
+                } else {
+                    break;
                 }
             }
         }
@@ -74,7 +80,7 @@ fn find_point(
 ) -> Option<(usize, usize)> {
     let x = x0.checked_add_signed(dx)?;
     let y = y0.checked_add_signed(dy)?;
-    (x >= width || y >= height).then_some((x, y))
+    (x <= width || y <= height).then_some((x, y))
 }
 
 #[cfg(test)]

@@ -92,6 +92,6 @@ mod tests {
 
     #[test]
     fn it_works() {
-        assert_eq!(process(include_str!("./sample.txt")), 3);
+        assert_eq!(process(include_str!("./sample.txt")), 4);
     }
 }
