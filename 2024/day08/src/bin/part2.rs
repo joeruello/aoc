@@ -1,4 +1,7 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    iter::successors,
+};
 
 use common::Itertools;
 use toodee::{TooDee, TooDeeOps};
@@ -35,17 +38,12 @@ fn process(input: &str) -> usize {
             let dy = y1 as isize - y2 as isize;
             let dx = x1 as isize - x2 as isize;
 
-            let mut p1 = (x2, y2);
-            while let Some(np) = find_point(p1, (dx, dy), grid.size()) {
-                antinodes.insert(np);
-                p1 = np;
-            }
-
-            let mut p2 = (x1, y1);
-            while let Some(np) = find_point(p2, (-dx, -dy), grid.size()) {
-                antinodes.insert(np);
-                p2 = np;
-            }
+            antinodes.extend(successors(Some((x2, y2)), |p| {
+                find_point(*p, (dx, dy), grid.size())
+            }));
+            antinodes.extend(successors(Some((x1, y1)), |p| {
+                find_point(*p, (-dx, -dy), grid.size())
+            }));
         }
     }
 
