@@ -16,22 +16,21 @@ fn process(input: &str) -> usize {
                     .collect::<Vec<_>>(),
             )
         })
-        .filter(|(res, operands)| guess_operator(*res, operands))
+        .filter(|(res, operands)| guess_operator(*res, operands[0], &operands[1..]))
         .map(|(res, _)| res)
         .sum()
 }
 
-fn guess_operator(result: usize, nums: &[usize]) -> bool {
-    let add = nums[0] + nums[1];
-    let mul = nums[0] * nums[1];
-    let concat = concat(nums[0], nums[1]);
-    match nums.len() {
-        2 => add == result || mul == result || concat == result,
-        _ => {
-            guess_operator(result, &[&[add], &nums[2..]].concat())
-                || guess_operator(result, &[&[mul], &nums[2..]].concat())
-                || guess_operator(result, &[&[concat], &nums[2..]].concat())
-        }
+fn guess_operator(result: usize, head: usize, tail: &[usize]) -> bool {
+    let add = head + tail[0];
+    let mul = head * tail[0];
+    let concat = concat(head, tail[0]);
+    if let 1 = tail.len() {
+        add == result || mul == result || concat == result
+    } else {
+        guess_operator(result, add, &tail[1..])
+            || guess_operator(result, mul, &tail[1..])
+            || guess_operator(result, concat, &tail[1..])
     }
 }
 
