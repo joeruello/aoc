@@ -22,6 +22,10 @@ fn process(input: &str) -> usize {
 }
 
 fn guess_operator(result: usize, head: usize, tail: &[usize]) -> bool {
+    if head > result {
+        return false;
+    }
+
     let add = head + tail[0];
     let mul = head * tail[0];
     let concat = concat(head, tail[0]);

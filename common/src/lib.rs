@@ -1,16 +1,27 @@
-use reqwest::blocking::Client;
-use std::env;
-
 pub use anyhow::Result;
 pub use itertools::Itertools;
+use reqwest::blocking::Client;
+use std::io::prelude::*;
+use std::path::Path;
+use std::{env, fs, fs::File};
 
 #[derive(Debug, Clone)]
 pub struct AocInput(String);
 
 impl AocInput {
     pub fn fetch(year: i16, day: i16) -> Result<Self> {
-        let input = download_input(year, day)?;
-        Ok(Self(input))
+        let path = format!("{year}/day{day:02}/input.txt");
+        if Path::new(&path).exists() {
+            let mut file = File::open(&path)?;
+            let mut contents = String::new();
+            file.read_to_string(&mut contents)?;
+            Ok(Self(contents))
+        } else {
+            println!("Downloading input file: {}", path);
+            let input = download_input(year, day)?;
+            fs::write(&path, input.clone())?;
+            Ok(Self(input))
+        }
     }
 }
 
