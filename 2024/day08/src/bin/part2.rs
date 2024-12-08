@@ -57,19 +57,6 @@ fn process(input: &str) -> usize {
         }
     }
 
-    for y in 0..height {
-        for x in 0..width {
-            if grid[(x, y)] != '.' {
-                print!("{}", grid[(x, y)]);
-            } else if antinodes.contains(&(x, y)) {
-                print!("#");
-            } else {
-                print!(".");
-            }
-        }
-        println!();
-    }
-
     antinodes.len()
 }
 
@@ -80,7 +67,7 @@ fn find_point(
 ) -> Option<(usize, usize)> {
     let x = x0.checked_add_signed(dx)?;
     let y = y0.checked_add_signed(dy)?;
-    (x <= width || y <= height).then_some((x, y))
+    (x < width && y < height).then_some((x, y))
 }
 
 #[cfg(test)]
