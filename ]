@@ -1,0 +1,30 @@
+use std::usize;
+
+use common::Itertools;
+
+fn main() {
+    let input: String = common::AocInput::fetch(2024, 11).unwrap().into();
+    println!("Output: {}", process(&input));
+}
+
+fn process(input: &str) -> usize {
+    let stones = input.split_whitespace().map(|n| n.parse::<usize>().unwrap()).collect_vec();
+
+}
+
+fn step(stones: &[usize]) -> Vec<usize> {
+let ret = vec![];
+
+for n in stones {
+    if s == 0 {
+        ret.push(1);
+    }
+    let digits = n.checked_ilog10().unwrap_or(0) + 1);
+    if (digits % 2 == 0) {
+        let top = n % 10.pow(digits/2);
+        let bottom = n - top;
+    
+    }
+}
+ret
+}
