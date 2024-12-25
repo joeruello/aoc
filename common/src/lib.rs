@@ -42,21 +42,52 @@ pub fn download_input(year: i16, day: i16) -> Result<String> {
     Ok(res.text_with_charset("utf8")?)
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Direction {
     N,
-    S,
+    NE,
     E,
+    SE,
+    S,
+    SW,
     W,
+    NW,
 }
 
 impl Direction {
-    pub fn opposite(&self) -> Direction {
+    pub fn bisect(&self, b: &Direction) -> Option<Direction> {
+        match (self, b) {
+            (Direction::N, Direction::E) | (Direction::E, Direction::N) => Some(Direction::NE),
+            (Direction::N, Direction::W) | (Direction::W, Direction::N) => Some(Direction::NW),
+            (Direction::S, Direction::E) | (Direction::E, Direction::S) => Some(Direction::SE),
+            (Direction::S, Direction::W) | (Direction::W, Direction::S) => Some(Direction::SW),
+            _ => None,
+        }
+    }
+
+    pub fn rot180(&self) -> Direction {
         match self {
             Direction::N => Direction::S,
             Direction::S => Direction::N,
             Direction::E => Direction::W,
             Direction::W => Direction::E,
+            Direction::NE => Direction::SW,
+            Direction::SE => Direction::NW,
+            Direction::SW => Direction::NE,
+            Direction::NW => Direction::SE,
+        }
+    }
+
+    pub fn xy(&self) -> (isize, isize) {
+        match self {
+            Direction::NE => (1, -1),
+            Direction::SE => (1, 1),
+            Direction::SW => (-1, 1),
+            Direction::NW => (-1, -1),
+            Direction::N => (0, -1),
+            Direction::E => (1, 0),
+            Direction::S => (0, 1),
+            Direction::W => (-1, 0),
         }
     }
 }
