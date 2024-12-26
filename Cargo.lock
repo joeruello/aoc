@@ -508,6 +508,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "day18-24"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "toodee",
+]
+
+[[package]]
 name = "day19-23"
 version = "0.1.0"
 dependencies = [

@@ -56,6 +56,10 @@ pub enum Direction {
 }
 
 impl Direction {
+    pub fn cardinals() -> [Direction; 4] {
+        [Direction::N, Direction::E, Direction::S, Direction::W]
+    }
+
     pub fn bisect(&self, b: &Direction) -> Option<Direction> {
         match (self, b) {
             (Direction::N, Direction::E) | (Direction::E, Direction::N) => Some(Direction::NE),
