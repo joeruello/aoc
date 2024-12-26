@@ -111,6 +111,7 @@ dependencies = [
  "anyhow",
  "itertools 0.13.0",
  "reqwest",
+ "toodee",
 ]
 
 [[package]]
@@ -455,6 +456,14 @@ name = "day15-23"
 version = "0.1.0"
 dependencies = [
  "common",
+]
+
+[[package]]
+name = "day15-24"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "toodee",
 ]
 
 [[package]]

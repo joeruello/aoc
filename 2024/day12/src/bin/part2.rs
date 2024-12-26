@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use common::{Direction, Itertools};
-use toodee::{TooDee, TooDeeOps};
+use common::{Direction, DirectionOps, Itertools};
+use toodee::TooDee;
 
 fn main() {
     let input: String = common::AocInput::fetch(2024, 12).unwrap().into();
@@ -34,13 +34,8 @@ fn process(input: &str) -> usize {
             area += 1;
             points.insert(p);
 
-            for (n, dir) in neighbours(p, &grid).iter().zip([
-                Direction::N,
-                Direction::E,
-                Direction::S,
-                Direction::W,
-            ]) {
-                if let Some(n) = *n {
+            for dir in [Direction::N, Direction::E, Direction::S, Direction::W] {
+                if let Some(n) = grid.move_point(&p, dir.xy()) {
                     if grid[n] == grid[p] {
                         current.push_back(n);
                     } else {
@@ -145,32 +140,6 @@ fn process(input: &str) -> usize {
         sum += area * (corners.len() + inner_corners.len());
     }
     sum
-}
-
-trait DirectionOps {
-    fn move_point(&self, p: &(usize, usize), dir: (isize, isize)) -> Option<(usize, usize)>;
-}
-
-impl<T> DirectionOps for TooDee<T> {
-    fn move_point(
-        &self,
-        (x0, y0): &(usize, usize),
-        (dx, dy): (isize, isize),
-    ) -> Option<(usize, usize)> {
-        let (width, height) = self.size();
-        let x = x0.checked_add_signed(dx)?;
-        let y = y0.checked_add_signed(dy)?;
-        (x < width && y < height).then_some((x, y))
-    }
-}
-
-fn neighbours((x, y): (usize, usize), grid: &TooDee<char>) -> [Option<(usize, usize)>; 4] {
-    let n = (y > 0).then_some((x, y.saturating_sub(1)));
-    let s = (y < grid.num_rows() - 1).then_some((x, y + 1));
-    let w = (x > 0).then_some((x.saturating_sub(1), y));
-    let e = (x < grid.num_cols() - 1).then_some((x + 1, y));
-
-    [n, e, s, w]
 }
 
 #[cfg(test)]

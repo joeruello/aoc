@@ -9,4 +9,5 @@ edition = "2021"
 anyhow = "1.0.93"
 itertools = "0.13.0"
 reqwest = { version =  "0.12.9", features = ["blocking"] }
+toodee = "0.5.0"
 

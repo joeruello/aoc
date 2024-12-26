@@ -4,6 +4,7 @@ use reqwest::blocking::Client;
 use std::io::prelude::*;
 use std::path::Path;
 use std::{env, fs, fs::File};
+use toodee::{TooDee, TooDeeOps};
 
 #[derive(Debug, Clone)]
 pub struct AocInput(String);
@@ -89,6 +90,44 @@ impl Direction {
             Direction::S => (0, 1),
             Direction::W => (-1, 0),
         }
+    }
+}
+
+pub trait DirectionOps<T> {
+    fn move_point(&self, p: &(usize, usize), dir: (isize, isize)) -> Option<(usize, usize)>;
+
+    fn find(&self, tile: T) -> Option<(usize, usize)>;
+
+    fn neighbours(&self, point: (usize, usize)) -> impl Iterator<Item = (usize, usize)>;
+}
+
+impl<T: PartialEq> DirectionOps<T> for TooDee<T> {
+    fn move_point(
+        &self,
+        (x0, y0): &(usize, usize),
+        (dx, dy): (isize, isize),
+    ) -> Option<(usize, usize)> {
+        let (width, height) = self.size();
+        let x = x0.checked_add_signed(dx)?;
+        let y = y0.checked_add_signed(dy)?;
+        (x < width && y < height).then_some((x, y))
+    }
+
+    fn find(&self, tile: T) -> Option<(usize, usize)> {
+        let (width, height) = self.size();
+
+        (0..width)
+            .cartesian_product(0..height)
+            .find(|&p| self[p] == tile)
+    }
+
+    fn neighbours(&self, (x, y): (usize, usize)) -> impl Iterator<Item = (usize, usize)> {
+        let n = (y > 0).then_some((x, y.saturating_sub(1)));
+        let s = (y < self.num_rows() - 1).then_some((x, y + 1));
+        let w = (x > 0).then_some((x.saturating_sub(1), y));
+        let e = (x < self.num_cols() - 1).then_some((x + 1, y));
+
+        [n, e, s, w].into_iter().flatten()
     }
 }
 
