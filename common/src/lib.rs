@@ -112,7 +112,7 @@ pub trait DirectionOps<T> {
     fn neighbours(&self, point: (usize, usize)) -> impl Iterator<Item = (usize, usize)>;
 }
 
-impl<T: PartialEq> DirectionOps<T> for TooDee<T> {
+impl<T: Eq> DirectionOps<T> for TooDee<T> {
     fn move_point(
         &self,
         (x0, y0): &(usize, usize),
