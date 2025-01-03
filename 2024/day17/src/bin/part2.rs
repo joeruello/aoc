@@ -55,48 +55,22 @@ impl Computer {
 
             let instruction: Instruction = program[pointer].into();
             let operand = program[pointer + 1];
-
             match instruction {
-                Instruction::Adv => {
-                    let dem = 2u64.pow(self.combo(operand) as u32);
-                    self.a /= dem;
-                    pointer += 2;
-                }
-                Instruction::Bxl => {
-                    self.b ^= operand;
-                    pointer += 2;
-                }
-                Instruction::Bst => {
-                    self.b = self.combo(operand) % 8;
-                    pointer += 2;
-                }
+                Instruction::Adv => self.a /= 2u64.pow(self.combo(operand) as u32),
+                Instruction::Bxl => self.b ^= operand,
+                Instruction::Bst => self.b = self.combo(operand) % 8,
                 Instruction::Jnz => {
-                    if self.a == 0 {
-                        pointer += 2
-                    } else {
-                        pointer = operand as usize
+                    if self.a > 0 {
+                        pointer = operand as usize;
+                        continue; // don't inc pointer
                     }
                 }
-                Instruction::Bxc => {
-                    self.b ^= self.c;
-                    pointer += 2;
-                }
-                Instruction::Out => {
-                    out.push(self.combo(operand) % 8);
-
-                    pointer += 2;
-                }
-                Instruction::Bdv => {
-                    let dem = 2u64.pow(self.combo(operand) as u32);
-                    self.b = self.a / dem;
-                    pointer += 2;
-                }
-                Instruction::Cdv => {
-                    let dem = 2u64.pow(self.combo(operand) as u32);
-                    self.c = self.a / dem;
-                    pointer += 2;
-                }
+                Instruction::Bxc => self.b ^= self.c,
+                Instruction::Out => out.push(self.combo(operand) % 8),
+                Instruction::Bdv => self.b = self.a / 2u64.pow(self.combo(operand) as u32),
+                Instruction::Cdv => self.c = self.a / 2u64.pow(self.combo(operand) as u32),
             }
+            pointer += 2;
         }
         out
     }

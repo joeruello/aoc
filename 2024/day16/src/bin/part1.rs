@@ -38,7 +38,6 @@ fn process(input: &str) -> usize {
 
     let mut heap = BinaryHeap::from([State(start, Direction::E, 0)]);
     let mut lowest_score = usize::MAX;
-    let cardinals = [Direction::N, Direction::E, Direction::S, Direction::W];
     let mut visited = HashMap::new();
 
     while let Some(State(point, dir, score)) = heap.pop() {
@@ -58,7 +57,7 @@ fn process(input: &str) -> usize {
             }
         }
 
-        for n_dir in cardinals {
+        for n_dir in Direction::CARDINALS {
             if let Some(neighbour) = grid.move_point(&point, n_dir.xy()) {
                 if grid[neighbour] == '#' {
                     continue;

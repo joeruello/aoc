@@ -62,8 +62,8 @@ fn find_exit(grid: &TooDee<u8>, bytes: &[(usize, usize)]) -> bool {
         }
         visited.insert(point, score);
 
-        for dir in [Direction::N, Direction::E, Direction::S, Direction::W] {
-            if let Some(next) = grid.move_point(&point, dir.xy()) {
+        for dir in Direction::CARDINALS {
+            if let Some(next) = grid.move_point(&point, dir) {
                 if bytes.contains(&next) {
                     continue;
                 }

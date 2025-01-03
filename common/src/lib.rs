@@ -1,10 +1,10 @@
-pub use anyhow::Result;
 pub use itertools::Itertools;
 use reqwest::blocking::Client;
 use std::io::prelude::*;
 use std::path::Path;
 use std::{env, fs, fs::File};
 use toodee::{TooDee, TooDeeOps};
+pub use {anyhow::Context, anyhow::Result};
 
 #[derive(Debug, Clone)]
 pub struct AocInput(String);
@@ -56,9 +56,7 @@ pub enum Direction {
 }
 
 impl Direction {
-    pub fn cardinals() -> [Direction; 4] {
-        [Direction::N, Direction::E, Direction::S, Direction::W]
-    }
+    pub const CARDINALS: [Direction; 4] = [Direction::N, Direction::E, Direction::S, Direction::W];
 
     pub fn bisect(&self, b: &Direction) -> Option<Direction> {
         match (self, b) {
@@ -96,9 +94,18 @@ impl Direction {
         }
     }
 }
+impl From<Direction> for (isize, isize) {
+    fn from(value: Direction) -> Self {
+        value.xy()
+    }
+}
 
 pub trait DirectionOps<T> {
-    fn move_point(&self, p: &(usize, usize), dir: (isize, isize)) -> Option<(usize, usize)>;
+    fn move_point(
+        &self,
+        p: &(usize, usize),
+        dir: impl Into<(isize, isize)>,
+    ) -> Option<(usize, usize)>;
 
     fn find(&self, tile: T) -> Option<(usize, usize)>;
 
@@ -109,8 +116,9 @@ impl<T: PartialEq> DirectionOps<T> for TooDee<T> {
     fn move_point(
         &self,
         (x0, y0): &(usize, usize),
-        (dx, dy): (isize, isize),
+        d: impl Into<(isize, isize)>,
     ) -> Option<(usize, usize)> {
+        let (dy, dx) = d.into();
         let (width, height) = self.size();
         let x = x0.checked_add_signed(dx)?;
         let y = y0.checked_add_signed(dy)?;

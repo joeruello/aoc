@@ -58,7 +58,7 @@ fn process(input: &str, width: usize, height: usize, count: usize) -> usize {
 
     let cardinals = [Direction::N, Direction::E, Direction::S, Direction::W];
     while let Some(State(point, score)) = queue.pop() {
-        if score > lowest_score {
+        if score >= lowest_score {
             continue;
         }
         if point == goal {
@@ -69,12 +69,11 @@ fn process(input: &str, width: usize, height: usize, count: usize) -> usize {
         }
 
         if let Some(prev_score) = visited.get(&point) {
-            if *prev_score <= score {
+            if *prev_score < score {
                 continue;
             }
         }
         visited.insert(point, score);
-
         for dir in cardinals {
             if let Some(next) = grid.move_point(&point, dir.xy()) {
                 if bytes.contains(&next) {
@@ -87,6 +86,8 @@ fn process(input: &str, width: usize, height: usize, count: usize) -> usize {
                 queue.push(State(next, score + 1));
             }
         }
+
+        println!("{} -> {:?}", queue.len(), (point, score))
     }
 
     lowest_score
