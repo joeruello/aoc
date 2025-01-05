@@ -111,7 +111,7 @@ dependencies = [
  "anyhow",
  "itertools 0.13.0",
  "reqwest",
- "toodee",
+ "toodee 0.6.0",
 ]
 
 [[package]]
@@ -254,7 +254,7 @@ name = "day04-24"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -303,7 +303,7 @@ version = "0.1.0"
 dependencies = [
  "common",
  "rayon",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -350,7 +350,7 @@ name = "day08-24"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -383,7 +383,7 @@ name = "day10-24"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -414,7 +414,7 @@ name = "day12-24"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -423,7 +423,7 @@ version = "0.1.0"
 dependencies = [
  "common",
  "itertools 0.12.1",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -440,7 +440,7 @@ name = "day14-23"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -463,7 +463,7 @@ name = "day15-24"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -471,7 +471,7 @@ name = "day16-23"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -479,7 +479,7 @@ name = "day16-24"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -487,7 +487,7 @@ name = "day17-23"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -504,7 +504,7 @@ dependencies = [
  "common",
  "indicatif",
  "itertools 0.12.1",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -512,7 +512,7 @@ name = "day18-24"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -543,7 +543,7 @@ name = "day20-24"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -551,7 +551,15 @@ name = "day21-23"
 version = "0.1.0"
 dependencies = [
  "common",
- "toodee",
+ "toodee 0.5.0",
+]
+
+[[package]]
+name = "day21-24"
+version = "0.1.0"
+dependencies = [
+ "common",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -568,7 +576,7 @@ version = "0.1.0"
 dependencies = [
  "common",
  "smallvec",
- "toodee",
+ "toodee 0.5.0",
 ]
 
 [[package]]
@@ -1840,6 +1848,15 @@ name = "toodee"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67cbd7813b7cb5b334047d59b00e8c378ebadc56439525f40ffc9a4ca9a1fe92"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "toodee"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "13d5ea2824b33f47c4bab60fcad4915bd0fce0b8f4c4a8878d4761d8a06fe9f1"
 dependencies = [
  "serde",
 ]

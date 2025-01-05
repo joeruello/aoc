@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
-use common::{Direction, DirectionOps, Itertools};
-use toodee::{TooDee, TooDeeOps};
+use common::{Direction, DirectionOps, Itertools,TooDee, TooDeeOps};
+
 
 fn main() {
     let input: String = common::AocInput::fetch(2024, 15).unwrap().into();

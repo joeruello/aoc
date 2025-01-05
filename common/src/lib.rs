@@ -3,7 +3,7 @@ use reqwest::blocking::Client;
 use std::io::prelude::*;
 use std::path::Path;
 use std::{env, fs, fs::File};
-use toodee::{TooDee, TooDeeOps};
+pub use toodee::{TooDee, TooDeeOps};
 pub use {anyhow::Context, anyhow::Result};
 
 #[derive(Debug, Clone)]

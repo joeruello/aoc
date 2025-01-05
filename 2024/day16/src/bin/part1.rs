@@ -3,8 +3,7 @@ use std::{
     collections::{BinaryHeap, HashMap},
 };
 
-use common::{Direction, DirectionOps, Itertools};
-use toodee::TooDee;
+use common::{Direction, DirectionOps, Itertools, TooDee};
 
 fn main() {
     let input: String = common::AocInput::fetch(2024, 16).unwrap().into();
