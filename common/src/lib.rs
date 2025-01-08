@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use std::path::Path;
 use std::{env, fs, fs::File};
 pub use toodee::{TooDee, TooDeeOps};
-pub use {anyhow::Context, anyhow::Result};
+pub use {anyhow::ensure, anyhow::Context, anyhow::Result};
 
 #[derive(Debug, Clone)]
 pub struct AocInput(String);
