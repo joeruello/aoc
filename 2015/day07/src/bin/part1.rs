@@ -28,7 +28,7 @@ fn parse_input(input: &str) -> Input {
 }
 
 fn process(input: &str) -> usize {
-    let mut nodes: VecDeque<(String, Node)> = input
+    let nodes: VecDeque<(String, Node)> = input
         .lines()
         .map(|l| {
             let (op, wire) = l.split_once(" -> ").expect("Should have arrow");

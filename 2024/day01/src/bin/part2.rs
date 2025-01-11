@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use common::Itertools;
 
 fn main() {
@@ -8,7 +6,7 @@ fn main() {
 }
 
 fn process(input: &str) -> usize {
-    let (mut left, mut right): (Vec<_>, Vec<_>) = input
+    let (left, right): (Vec<_>, Vec<_>) = input
         .lines()
         .map(|l| {
             let (a, b) = l.split_once("   ").unwrap();
