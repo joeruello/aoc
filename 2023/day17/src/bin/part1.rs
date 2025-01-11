@@ -102,7 +102,7 @@ fn dijkstra(grid: &Grid, start: Cordinate, dest: Cordinate) -> Option<usize> {
                 dir: neighbour_dir,
                 steps: if neighbour_dir == dir { steps + 1 } else { 1 },
             };
-            if next.steps > 3 || dir.opposite() == neighbour_dir {
+            if next.steps > 3 || dir.rot180() == neighbour_dir {
                 // Cant move more than 3 times in the same direction
                 continue;
             }

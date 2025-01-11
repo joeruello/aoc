@@ -1,6 +1,6 @@
 use std::collections::{BinaryHeap, HashMap};
 
-use common::{Direction, DirectionOps, TooDee};
+use common::{Direction, DirectionOps, TooDee, TooDeeOps};
 
 fn main() {
     let input: String = common::AocInput::fetch(2024, 18).unwrap().into();

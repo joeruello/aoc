@@ -14,6 +14,7 @@ fn turn_90(dir: Direction) -> Direction {
         Direction::E => Direction::S,
         Direction::S => Direction::W,
         Direction::W => Direction::N,
+        _ => panic!("unsupported dir"),
     }
 }
 
@@ -36,6 +37,7 @@ fn process(input: &str) -> usize {
             Direction::S => (y < grid.num_rows() - 1).then_some((x, y + 1)),
             Direction::W => (x > 0).then_some((x.saturating_sub(1), y)),
             Direction::E => (x < grid.num_cols() - 1).then_some((x + 1, y)),
+            _ => panic!("unsupported dir"),
         };
 
         if let Some(next_pos) = next_pos {

@@ -37,5 +37,6 @@ fn progress((x, y): Cordinate, dir: Direction) -> Cordinate {
         Direction::S => (x, y - 1),
         Direction::E => (x + 1, y),
         Direction::W => (x - 1, y),
+        _ => panic!("Unsupported Dir"),
     }
 }

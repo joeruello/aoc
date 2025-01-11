@@ -1,7 +1,4 @@
-use std::{
-    cmp::Ordering,
-    collections::BTreeMap,
-};
+use std::{cmp::Ordering, collections::BTreeMap};
 
 fn main() {
     let input: String = common::AocInput::fetch(2023, 7).unwrap().into();

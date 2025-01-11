@@ -71,6 +71,7 @@ fn next_position(dir: Dir, (x, y): (usize, usize), grid: &TooDee<char>) -> Optio
         Dir::S => (y < grid.num_rows() - 1).then_some((x, y + 1)),
         Dir::W => (x > 0).then_some((x.saturating_sub(1), y)),
         Dir::E => (x < grid.num_cols() - 1).then_some((x + 1, y)),
+        _ => panic!("unsupported dir"),
     }
 }
 
@@ -91,5 +92,6 @@ fn turn_90(dir: Dir) -> Dir {
         Dir::E => Dir::S,
         Dir::S => Dir::W,
         Dir::W => Dir::N,
+        _ => panic!("unsupported dir"),
     }
 }
