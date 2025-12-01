@@ -33,6 +33,8 @@ fn is_nice(line: &str) -> bool {
         }
     }
 
+    dbg!(&pairs);
+    dbg!(&repeats);
     pairs.into_values().filter(|p| p.len() > 1).count() > 0 && !repeats.is_empty()
 }
 

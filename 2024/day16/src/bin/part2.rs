@@ -63,7 +63,7 @@ fn process(input: &str) -> usize {
         new_path.push(point);
 
         for n_dir in Direction::CARDINALS {
-            if let Some(neighbour) = grid.move_point(&point, n_dir.xy()) {
+            if let Some(neighbour) = grid.move_point(&point, n_dir) {
                 if grid[neighbour] == '#' {
                     continue;
                 }

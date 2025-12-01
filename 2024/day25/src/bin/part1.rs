@@ -7,6 +7,7 @@ fn main() {
 
 const LINE_LEN: usize = 5;
 const SCHEM_HEIGHT: usize = 6;
+
 fn process(input: &str) -> usize {
     let schematics = input.split("\n\n");
     let mut locks = vec![];
