@@ -219,6 +219,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "day02-25"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
 name = "day03-15"
 version = "0.1.0"
 dependencies = [
@@ -239,6 +246,13 @@ version = "0.1.0"
 dependencies = [
  "common",
  "regex",
+]
+
+[[package]]
+name = "day03-25"
+version = "0.1.0"
+dependencies = [
+ "common",
 ]
 
 [[package]]
@@ -265,6 +279,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "day04-25"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
 name = "day05-15"
 version = "0.1.0"
 dependencies = [
@@ -284,6 +305,13 @@ dependencies = [
 
 [[package]]
 name = "day05-24"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
+name = "day05-25"
 version = "0.1.0"
 dependencies = [
  "common",
@@ -314,6 +342,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "day06-25"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
 name = "day07-15"
 version = "0.1.0"
 dependencies = [
@@ -331,6 +366,13 @@ dependencies = [
 
 [[package]]
 name = "day07-24"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
+name = "day07-25"
 version = "0.1.0"
 dependencies = [
  "common",
@@ -361,6 +403,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "day08-25"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
 name = "day09-23"
 version = "0.1.0"
 dependencies = [
@@ -371,6 +420,13 @@ dependencies = [
 
 [[package]]
 name = "day09-24"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
+name = "day09-25"
 version = "0.1.0"
 dependencies = [
  "common",
@@ -394,6 +450,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "day10-25"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
 name = "day11-23"
 version = "0.1.0"
 dependencies = [
@@ -404,6 +467,13 @@ dependencies = [
 
 [[package]]
 name = "day11-24"
+version = "0.1.0"
+dependencies = [
+ "common",
+]
+
+[[package]]
+name = "day11-25"
 version = "0.1.0"
 dependencies = [
  "common",
@@ -422,6 +492,13 @@ version = "0.1.0"
 dependencies = [
  "common",
  "toodee 0.5.0",
+]
+
+[[package]]
+name = "day12-25"
+version = "0.1.0"
+dependencies = [
+ "common",
 ]
 
 [[package]]
