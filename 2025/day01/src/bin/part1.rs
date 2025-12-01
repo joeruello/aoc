@@ -1,5 +1,3 @@
-use core::panic;
-
 fn main() {
     let input: String = common::AocInput::fetch(2025, 1).unwrap().into();
     println!("Output: {}", process(&input));
@@ -9,29 +7,23 @@ fn process(input: &str) -> i32 {
     let rots: Vec<_> = input
         .lines()
         .map(|l| {
-            let (dir, num) = l.split_at(1);
-            let dir = match &dir.chars().next().unwrap() {
-                'R' => 1,
-                'L' => -1,
-                _ => {
-                    panic!("unknown direction {dir}")
-                }
+            let dir = match &l[..1] {
+                "R" => 1,
+                "L" => -1,
+                _ => panic!("Unknown direction: {l}"),
             };
-            let num = num.parse::<i32>().unwrap();
+            let num = l[1..].parse::<i32>().unwrap();
             dir * num
         })
         .collect();
 
     let mut crossed = 0;
-    let mut sum = 50;
+    let mut dial = 50;
 
     for n in rots {
-        sum += n;
-        if !(0..=99).contains(&sum) {
-            sum = sum.rem_euclid(100);
-            if sum == 0 {
-                crossed += 1;
-            }
+        dial = (dial + n).rem_euclid(100);
+        if dial == 0 {
+            crossed += 1;
         }
     }
 
