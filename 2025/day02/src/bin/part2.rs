@@ -1,32 +1,21 @@
-use common::Itertools;
-
 fn main() {
     let input: String = common::AocInput::fetch(2025, 2).unwrap().into();
     println!("Output: {}", process(&input));
 }
 
 fn process(input: &str) -> u64 {
-    let ids = input
+    input
         .strip_suffix('\n')
         .unwrap()
         .split(',')
         .flat_map(|l| {
-            dbg!(l);
             let (a, b) = l.split_once('-').unwrap();
 
             [a.parse::<u64>().unwrap()..=b.parse::<u64>().unwrap()]
         })
-        .collect_vec();
-    let mut sum = 0;
-    for range in ids {
-        for id in range {
-            if !is_valid(id) {
-                sum += id;
-            }
-        }
-    }
-
-    sum
+        .flatten()
+        .filter(|id| !is_valid(*id))
+        .sum()
 }
 
 fn is_valid(id: u64) -> bool {
