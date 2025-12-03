@@ -14,13 +14,12 @@ fn process(input: &str) -> u32 {
         let (i, tens) = &bat[..bat.len() - 1]
             .iter()
             .enumerate()
-            .rev()
             .max_by_key(|(_, b)| *b)
             .unwrap();
-        dbg!(&bat, &tens);
-        let ones = dbg!(&bat[*i + 1..bat.len()]).iter().max().unwrap();
 
-        sum += dbg!((**tens * 10) + *ones)
+        let ones = &bat[*i + 1..bat.len()].iter().max().unwrap();
+
+        sum += (**tens * 10) + *ones
     }
 
     sum
@@ -32,6 +31,6 @@ mod tests {
 
     #[test]
     fn it_processes() {
-        assert_eq!(process(include_str!("./sample.txt")), 358);
+        assert_eq!(process(include_str!("./sample.txt")), 357);
     }
 }

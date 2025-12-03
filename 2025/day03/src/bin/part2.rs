@@ -11,7 +11,6 @@ fn process(input: &str) -> u64 {
 
     let mut sum = 0;
     for bat in batteries {
-        let mut s: u64 = 0;
         let mut i = 0;
         for place in (0..12).rev() {
             let (j, num) = &bat[i..bat.len() - place]
@@ -19,13 +18,11 @@ fn process(input: &str) -> u64 {
                 .enumerate()
                 .rev()
                 .max_by_key(|(_, b)| *b)
-                .unwrap()
-                .to_owned();
+                .unwrap();
 
             i += *j + 1;
-            s += **num * 10u64.pow(place as u32)
+            sum += **num * 10u64.pow(place as u32)
         }
-        sum += s;
     }
 
     sum
