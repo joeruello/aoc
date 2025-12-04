@@ -58,6 +58,16 @@ pub enum Direction {
 impl Direction {
     pub const CARDINALS: [Direction; 4] = [Direction::N, Direction::E, Direction::S, Direction::W];
 
+    pub const ALL: [Direction; 8] = [
+        Direction::N,
+        Direction::NE,
+        Direction::E,
+        Direction::SE,
+        Direction::S,
+        Direction::SW,
+        Direction::W,
+        Direction::NW,
+    ];
     pub fn bisect(&self, b: &Direction) -> Option<Direction> {
         match (self, b) {
             (Direction::N, Direction::E) | (Direction::E, Direction::N) => Some(Direction::NE),

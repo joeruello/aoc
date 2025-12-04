@@ -14,6 +14,7 @@ fn process(input: &str) -> u32 {
         let (i, tens) = &bat[..bat.len() - 1]
             .iter()
             .enumerate()
+            .rev() // max_by_key returns the _last_ index, we want the first
             .max_by_key(|(_, b)| *b)
             .unwrap();
 

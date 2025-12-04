@@ -16,7 +16,7 @@ fn process(input: &str) -> u64 {
             let (j, num) = &bat[i..bat.len() - place]
                 .iter()
                 .enumerate()
-                .rev()
+                .rev() // max_by_key returns the _last_ index, we want the first
                 .max_by_key(|(_, b)| *b)
                 .unwrap();
 
