@@ -2,6 +2,7 @@ pub use itertools::Itertools;
 use reqwest::blocking::Client;
 use std::io::prelude::*;
 use std::path::Path;
+use std::usize;
 use std::{env, fs, fs::File};
 pub use toodee::{TooDee, TooDeeOps};
 pub use {anyhow::ensure, anyhow::Context, anyhow::Result};
@@ -119,10 +120,16 @@ pub trait DirectionOps<T> {
 
     fn find(&self, tile: T) -> Option<(usize, usize)>;
 
+    fn find_by<P>(&self, predicate: P) -> Option<(usize, usize)>
+    where
+        P: FnMut(&T) -> bool;
     fn neighbours(&self, point: (usize, usize)) -> impl Iterator<Item = (usize, usize)>;
 }
 
-impl<T: Eq> DirectionOps<T> for TooDee<T> {
+impl<T: Eq> DirectionOps<T> for TooDee<T>
+where
+    T: Copy,
+{
     fn move_point(
         &self,
         (x0, y0): &(usize, usize),
@@ -141,6 +148,17 @@ impl<T: Eq> DirectionOps<T> for TooDee<T> {
         (0..width)
             .cartesian_product(0..height)
             .find(|&p| self[p] == tile)
+    }
+
+    fn find_by<P>(&self, mut predicate: P) -> Option<(usize, usize)>
+    where
+        P: FnMut(&T) -> bool,
+    {
+        let (width, height) = self.size();
+
+        (0..width)
+            .cartesian_product(0..height)
+            .find(|&p| predicate(&self[p]))
     }
 
     fn neighbours(&self, (x, y): (usize, usize)) -> impl Iterator<Item = (usize, usize)> {
