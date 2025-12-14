@@ -431,6 +431,7 @@ name = "day09-25"
 version = "0.1.0"
 dependencies = [
  "common",
+ "glam 0.30.9",
 ]
 
 [[package]]
