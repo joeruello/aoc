@@ -1,10 +1,12 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::{collections::HashMap, time::Instant};
 
 use common::Itertools;
 
 fn main() {
     let input: String = common::AocInput::fetch(2025, 11).unwrap().into();
-    println!("Output: {}", process(&input));
+
+    let start = Instant::now();
+    println!("Output: {} ({:?})", process(&input), start.elapsed());
 }
 
 fn process(input: &str) -> usize {
@@ -16,32 +18,32 @@ fn process(input: &str) -> usize {
         graph.insert(src, dests);
     });
 
-    let mut queue = VecDeque::new();
-    let mut initial = HashSet::new();
-    initial.insert("you");
-    queue.push_front(("you", initial));
+    let mut memo = HashMap::new();
+    count_paths("you", "out", &graph, &mut memo)
+}
 
-    let mut solutions = 0;
-
-    while let Some((current, path)) = queue.pop_front() {
-        if current == "out" {
-            solutions += 1;
-            continue;
-        }
-
-        if let Some(next) = graph.get(current) {
-            for next in next {
-                if path.contains(next) {
-                    continue;
-                }
-                let mut path = path.clone();
-                path.insert(current);
-                queue.push_back((next, path));
-            }
-        }
+fn count_paths<'a>(
+    from: &'a str,
+    to: &'a str,
+    graph: &HashMap<&'a str, Vec<&'a str>>,
+    memo: &mut HashMap<&'a str, usize>,
+) -> usize {
+    if let Some(&c) = memo.get(from) {
+        return c;
     }
 
-    solutions
+    if from == to {
+        return 1;
+    }
+
+    let mut sum = 0;
+    for n in graph.get(from).into_iter().flatten() {
+        sum += count_paths(n, to, graph, memo);
+    }
+
+    memo.insert(from, sum);
+
+    sum
 }
 
 #[cfg(test)]
